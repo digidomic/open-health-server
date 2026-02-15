@@ -87,6 +87,18 @@ def get_entry_by_date(
 def get_current_user(username: str = Depends(verify_token)):
     """Get current user info"""
     return {"username": username}
+
+@app.get("/api/user/config")
+def get_user_config(username: str = Depends(verify_token)):
+    """Get user configuration (language and units)"""
+    user_data = USERS.get(username, {})
+    return {
+        "username": username,
+        "language": user_data.get("language", "de"),
+        "units": user_data.get("units", "metric")
+    }
+
+@app.get("/api/health/latest")
 def get_latest_entry(
     db: Session = Depends(get_db), 
     username: str = Depends(verify_token)

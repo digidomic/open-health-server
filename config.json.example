@@ -1,7 +1,9 @@
 {
   "users": {
     "your_username": {
-      "token": "your_secure_token_here"
+      "token": "your_secure_token_here",
+      "language": "de",
+      "units": "metric"
     }
   },
   "api_port": 8000,

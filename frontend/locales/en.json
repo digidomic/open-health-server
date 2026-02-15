@@ -1,0 +1,91 @@
+{
+  "app": {
+    "title": "Open Health Server",
+    "online": "Online",
+    "offline": "Offline"
+  },
+  "nav": {
+    "overview": "Overview",
+    "add": "Add",
+    "history": "History"
+  },
+  "greeting": {
+    "hello": "Hello",
+    "welcome": "Welcome"
+  },
+  "stats": {
+    "steps": "Steps",
+    "stepsToday": "Steps today",
+    "sleep": "Sleep",
+    "sleepHours": "Hours of sleep",
+    "restingHR": "Resting HR",
+    "avgHR": "Avg HR",
+    "energy": "Activity",
+    "energyKcal": "kcal Activity",
+    "weight": "Weight",
+    "weightUnit": "Weight {unit}",
+    "training": "Training",
+    "trainingMinutes": "Minutes training"
+  },
+  "charts": {
+    "steps7Days": "Steps - 7 Days",
+    "sleepTrend": "Sleep Trend",
+    "heartRate": "Heart Rate",
+    "range7Days": "7 Days",
+    "range30Days": "30 Days"
+  },
+  "statsSection": {
+    "title": "30-Day Statistics",
+    "avgSteps": "Avg steps/day",
+    "avgSleep": "Avg sleep",
+    "avgRestingHR": "Avg resting HR",
+    "avgWeight": "Avg weight",
+    "trainingPerWeek": "Training (min/week)"
+  },
+  "form": {
+    "newEntry": "New Entry",
+    "editEntry": "Edit Entry",
+    "date": "Date",
+    "steps": "Steps",
+    "sleep": "Sleep (h:mm)",
+    "sleepFormat": "Format: 7:30 or 7.5",
+    "sleepIndex": "Sleep Index",
+    "restingHR": "Resting HR",
+    "avgHR": "Avg HR",
+    "weight": "Weight",
+    "weightUnit": "Weight ({unit})",
+    "energy": "Activity Energy",
+    "energyUnit": "Activity Energy ({unit})",
+    "training": "Training",
+    "trainingUnit": "Training (min)",
+    "notes": "Notes",
+    "save": "Save",
+    "update": "Update"
+  },
+  "history": {
+    "noEntries": "No entries available",
+    "edit": "Edit"
+  },
+  "messages": {
+    "saved": "✅ Saved!",
+    "updated": "✅ Updated!",
+    "error": "❌ Error",
+    "connectionError": "❌ Connection error",
+    "missingToken": "Missing auth token! Please open URL with ?token=...",
+    "offline": "⚠️ Cannot connect to server. Check if backend is running!",
+    "reconnected": "✅ Connection restored"
+  },
+  "units": {
+    "metric": {
+      "weight": "kg",
+      "energy": "kcal"
+    },
+    "imperial": {
+      "weight": "lbs",
+      "energy": "kcal"
+    }
+  },
+  "date": {
+    "format": "en-US"
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "app": {
+    "title": "Open Health Server",
+    "online": "Online",
+    "offline": "Offline"
+  },
+  "nav": {
+    "overview": "Übersicht",
+    "add": "Hinzufügen",
+    "history": "Verlauf"
+  },
+  "greeting": {
+    "hello": "Hallo",
+    "welcome": "Willkommen"
+  },
+  "stats": {
+    "steps": "Schritte",
+    "stepsToday": "Schritte heute",
+    "sleep": "Schlaf",
+    "sleepHours": "Stunden Schlaf",
+    "restingHR": "Ruhe-HF",
+    "avgHR": "Ø HF",
+    "energy": "Aktivität",
+    "energyKcal": "kcal Aktivität",
+    "weight": "Gewicht",
+    "weightUnit": "Gewicht {unit}",
+    "training": "Training",
+    "trainingMinutes": "Minuten Training"
+  },
+  "charts": {
+    "steps7Days": "Schritte - 7 Tage",
+    "sleepTrend": "Schlaf-Trend",
+    "heartRate": "Herzfrequenz",
+    "range7Days": "7 Tage",
+    "range30Days": "30 Tage"
+  },
+  "statsSection": {
+    "title": "30-Tage Statistiken",
+    "avgSteps": "Ø Schritte/Tag",
+    "avgSleep": "Ø Schlaf",
+    "avgRestingHR": "Ø Ruhe-HF",
+    "avgWeight": "Ø Gewicht",
+    "trainingPerWeek": "Training (min/Woche)"
+  },
+  "form": {
+    "newEntry": "Neuer Eintrag",
+    "editEntry": "Eintrag bearbeiten",
+    "date": "Datum",
+    "steps": "Schritte",
+    "sleep": "Schlaf (h:mm)",
+    "sleepFormat": "Format: 7:30 oder 7.5",
+    "sleepIndex": "Schlafindex",
+    "restingHR": "Ruhe-HF",
+    "avgHR": "Ø HF",
+    "weight": "Gewicht",
+    "weightUnit": "Gewicht ({unit})",
+    "energy": "Aktivitätsenergie",
+    "energyUnit": "Aktivitätsenergie ({unit})",
+    "training": "Training",
+    "trainingUnit": "Training (min)",
+    "notes": "Notizen",
+    "save": "Speichern",
+    "update": "Aktualisieren"
+  },
+  "history": {
+    "noEntries": "Keine Einträge vorhanden",
+    "edit": "Bearbeiten"
+  },
+  "messages": {
+    "saved": "✅ Gespeichert!",
+    "updated": "✅ Aktualisiert!",
+    "error": "❌ Fehler",
+    "connectionError": "❌ Verbindungsfehler",
+    "missingToken": "Fehlender Auth Token! Bitte URL mit ?token=... aufrufen.",
+    "offline": "⚠️ Keine Verbindung zum Server. Prüfe ob das Backend läuft!",
+    "reconnected": "✅ Verbindung wiederhergestellt"
+  },
+  "units": {
+    "metric": {
+      "weight": "kg",
+      "energy": "kcal"
+    },
+    "imperial": {
+      "weight": "lbs",
+      "energy": "kcal"
+    }
+  },
+  "date": {
+    "format": "de-DE"
+  }
+}
