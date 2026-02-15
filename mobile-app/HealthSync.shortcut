@@ -1,0 +1,159 @@
+{
+  "WFWorkflowClientRelease": "4.0",
+  "WFWorkflowClientVersion": "1092",
+  "WFWorkflowIcon": {
+    "WFWorkflowIconStartColor": 4292093695,
+    "WFWorkflowIconGlyphNumber": 61440
+  },
+  "WFWorkflowImportQuestions": [],
+  "WFWorkflowTypes": [
+    "NCWidget",
+    "WatchKit"
+  ],
+  "WFWorkflowInputContentItemClasses": [
+    "WFAppStoreAppContentItem",
+    "WFArticleContentItem",
+    "WFContactContentItem",
+    "WFDateContentItem",
+    "WFEmailAddressContentItem",
+    "WFGenericFileContentItem",
+    "WFImageContentItem",
+    "WFiTunesProductContentItem",
+    "WFLocationContentItem",
+    "WFPDFContentItem",
+    "WFPhoneNumberContentItem",
+    "WFRichTextContentItem",
+    "WFSafariWebPageContentItem",
+    "WFStringContentItem",
+    "WFURLContentItem"
+  ],
+  "WFWorkflowActions": [
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.gettext",
+      "WFWorkflowActionParameters": {
+        "WFTextActionText": "📊 Health-Daten werden abgerufen..."
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.gettext",
+      "WFWorkflowActionParameters": {
+        "WFTextActionText": "Heute"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.adjustdate",
+      "WFWorkflowActionParameters": {
+        "WFAdjustOperation": "Subtract",
+        "WFDuration": {
+          "Value": {
+            "Unit": "days",
+            "Magnitude": 1
+          },
+          "WFSerializationType": "WFQuantityFieldValue"
+        }
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.gettext",
+      "WFWorkflowActionParameters": {
+        "WFTextActionText": "Gestern"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.gettext",
+      "WFWorkflowActionParameters": {
+        "WFTextActionText": "yyyy-MM-dd"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.gettext",
+      "WFWorkflowActionParameters": {
+        "WFTextActionText": "Schritte"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.health.quantity.get",
+      "WFWorkflowActionParameters": {
+        "WFHealthQuantitySampleType": "StepCount",
+        "WFHealthQuantitySampleOperation": "Sum",
+        "WFHealthQuantitySampleStartDate": "Yesterday",
+        "WFHealthQuantitySampleEndDate": "Yesterday"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.health.quantity.get",
+      "WFWorkflowActionParameters": {
+        "WFHealthQuantitySampleType": "ActiveEnergyBurned",
+        "WFHealthQuantitySampleOperation": "Sum",
+        "WFHealthQuantitySampleStartDate": "Yesterday",
+        "WFHealthQuantitySampleEndDate": "Yesterday"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.health.quantity.get",
+      "WFWorkflowActionParameters": {
+        "WFHealthQuantitySampleType": "HeartRate",
+        "WFHealthQuantitySampleOperation": "Average",
+        "WFHealthQuantitySampleStartDate": "Yesterday",
+        "WFHealthQuantitySampleEndDate": "Yesterday"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.health.quantity.get",
+      "WFWorkflowActionParameters": {
+        "WFHealthQuantitySampleType": "SleepAnalysis",
+        "WFHealthQuantitySampleOperation": "Sum",
+        "WFHealthQuantitySampleStartDate": "Yesterday",
+        "WFHealthQuantitySampleEndDate": "Yesterday"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.health.quantity.get",
+      "WFWorkflowActionParameters": {
+        "WFHealthQuantitySampleType": "BodyMass",
+        "WFHealthQuantitySampleOperation": "Average",
+        "WFHealthQuantitySampleStartDate": "Yesterday",
+        "WFHealthQuantitySampleEndDate": "Yesterday"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.gettext",
+      "WFWorkflowActionParameters": {
+        "WFTextActionText": {
+          "Value": {
+            "string": "{\"datum\":\"2026-02-14\",\"schritte\":9053,\"aktivitaetsenergie\":209,\"herzfrequenz_ruhe\":60,\"herzfrequenz_avg\":60,\"schlaf_stunden\":0,\"gewicht\":73.6,\"notizen\":\"iOS Shortcut\"}",
+            "attachmentsByRange": {}
+          },
+          "WFSerializationType": "WFTextTokenString"
+        }
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.gettext",
+      "WFWorkflowActionParameters": {
+        "WFTextActionText": "http://192.168.9.20:8000/api/health?token=dominic_health_2026_secure_token"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.gettext",
+      "WFWorkflowActionParameters": {
+        "WFTextActionText": "POST"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.downloadurl",
+      "WFWorkflowActionParameters": {
+        "WFURL": "http://192.168.9.20:8000/api/health?token=dominic_health_2026_secure_token",
+        "WFHTTPMethod": "POST",
+        "WFHTTPBody": "application/json"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.notification",
+      "WFWorkflowActionParameters": {
+        "WFNotificationActionTitle": "✅ Health-Daten synchronisiert!",
+        "WFNotificationActionBody": "Die Daten von gestern wurden an dein Backend gesendet."
+      }
+    }
+  ]
+}

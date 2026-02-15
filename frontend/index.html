@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="de" class="antialiased">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#10b981">
+    <title>Open Health Server</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        body { -webkit-tap-highlight-color: transparent; }
+        .glass { background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); }
+        .dark .glass { background: rgba(31,41,55,0.9); }
+        .card-gradient { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+        .card-gradient-2 { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); }
+        .card-gradient-3 { background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); }
+        .card-gradient-4 { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+        .slide-in { animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .pulse-dot {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .nav-item.active { color: #10b981; }
+        .nav-item.active svg { stroke: #10b981; }
+        
+        /* Dark Mode Styles */
+        .dark body {
+            background-color: #111827;
+            color: #f3f4f6;
+        }
+        .dark .bg-gray-50 { background-color: #1f2937; }
+        .dark .bg-gray-100 { background-color: #374151; }
+        .dark .bg-gray-200 { background-color: #4b5563; }
+        .dark .bg-white { background-color: #1f2937; }
+        .dark .text-gray-800 { color: #f3f4f6; }
+        .dark .text-gray-700 { color: #e5e7eb; }
+        .dark .text-gray-600 { color: #d1d5db; }
+        .dark .text-gray-500 { color: #9ca3af; }
+        .dark .text-gray-400 { color: #6b7280; }
+        .dark .border-gray-100 { border-color: #374151; }
+        .dark .border-gray-200 { border-color: #4b5563; }
+        .dark nav {
+            background-color: #1f2937;
+            border-color: #374151;
+        }
+        .dark header {
+            background: rgba(31,41,55,0.9);
+            border-color: #374151;
+        }
+        .dark input, .dark textarea {
+            background-color: #374151;
+            border-color: #4b5563;
+            color: #f3f4f6;
+        }
+        .dark input::placeholder, .dark textarea::placeholder {
+            color: #6b7280;
+        }
+        .dark .filter-btn.bg-gray-200 {
+            background-color: #374151;
+            color: #d1d5db;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen pb-20">
+    <!-- Header -->
+    <header class="sticky top-0 z-50 glass border-b border-gray-200">
+        <div class="px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 card-gradient rounded-xl flex items-center justify-center">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                    </svg>
+                </div>
+                <h1 class="text-lg font-bold text-gray-800">Open Health Server</h1>
+            </div>
+            <div class="flex items-center gap-2">
+                <!-- Dark Mode Toggle -->
+                <button id="dark-mode-toggle" onclick="toggleDarkMode()" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-600 dark:text-yellow-400 transition-colors" title="Dark Mode">
+                    <svg id="sun-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    </svg>
+                    <svg id="moon-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                    </svg>
+                </button>
+                <span class="text-xs text-gray-500" id="connection-status">
+                    <span class="inline-block w-2 h-2 bg-green-500 rounded-full pulse-dot mr-1"></span>
+                    Online
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Dashboard View -->
+    <main id="dashboard-view" class="p-4 slide-in">
+        <!-- Willkommen mit Navigation -->
+        <div class="mb-6">
+            <h2 class="text-2xl font-bold text-gray-800" id="greeting" style="opacity: 0; transition: opacity 0.3s;"><span id="greeting-name"></span></h2>
+            <div class="flex items-center justify-center gap-4 mt-2">
+                <button id="prev-day-btn" onclick="navigateDay(-1)" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed" disabled>
+                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                </button>
+                <p class="text-gray-500 text-sm font-medium" id="today-date"></p>
+                <button id="next-day-btn" onclick="navigateDay(1)" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed" disabled>
+                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Quick Stats Cards -->
+        <div class="grid grid-cols-2 gap-3 mb-6">
+            <div class="card-gradient rounded-2xl p-4 text-white shadow-lg">
+                <div class="flex items-center justify-between mb-2">
+                    <svg class="w-5 h-5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                    <span class="text-xs opacity-80" id="steps-trend"></span>
+                </div>
+                <div class="text-2xl font-bold" id="steps-value">-</div>
+                <div class="text-xs opacity-80">Schritte heute</div>
+            </div>
+            <div class="card-gradient-2 rounded-2xl p-4 text-white shadow-lg">
+                <div class="flex items-center justify-between mb-2">
+                    <svg class="w-5 h-5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                    </svg>
+                    <span class="text-xs opacity-80" id="sleep-trend"></span>
+                </div>
+                <div class="text-2xl font-bold" id="sleep-value">-</div>
+                <div class="text-xs opacity-80">Stunden Schlaf</div>
+            </div>
+            <div class="card-gradient-3 rounded-2xl p-4 text-white shadow-lg">
+                <div class="flex items-center justify-between mb-2">
+                    <svg class="w-5 h-5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                    </svg>
+                </div>
+                <div class="text-2xl font-bold" id="hr-value">-</div>
+                <div class="text-xs opacity-80">Ruhe-HF</div>
+            </div>
+            <div class="card-gradient-4 rounded-2xl p-4 text-white shadow-lg">
+                <div class="flex items-center justify-between mb-2">
+                    <svg class="w-5 h-5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path>
+                    </svg>
+                </div>
+                <div class="text-2xl font-bold" id="energy-value">-</div>
+                <div class="text-xs opacity-80">kcal Aktivität</div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 mb-4">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="font-semibold text-gray-800">Schritte - 7 Tage</h3>
+                <select id="steps-range" class="text-sm bg-gray-100 rounded-lg px-2 py-1 border-0">
+                    <option value="7">7 Tage</option>
+                    <option value="30">30 Tage</option>
+                </select>
+            </div>
+            <div class="h-48">
+                <canvas id="stepsChart"></canvas>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 mb-4">
+            <h3 class="font-semibold text-gray-800 mb-4">Schlaf-Trend</h3>
+            <div class="h-48">
+                <canvas id="sleepChart"></canvas>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 mb-4">
+            <h3 class="font-semibold text-gray-800 mb-4">Herzfrequenz</h3>
+            <div class="h-48">
+                <canvas id="hrChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Stats Overview -->
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 mb-4">
+            <h3 class="font-semibold text-gray-800 mb-4">30-Tage Statistiken</h3>
+            <div class="space-y-3" id="stats-container">
+                <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span class="text-gray-600">Ø Schritte/Tag</span>
+                    <span class="font-semibold text-gray-800" id="avg-steps">-</span>
+                </div>
+                <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span class="text-gray-600">Ø Schlaf</span>
+                    <span class="font-semibold text-gray-800" id="avg-sleep">-</span>
+                </div>
+                <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span class="text-gray-600">Ø Ruhe-HF</span>
+                    <span class="font-semibold text-gray-800" id="avg-hr">-</span>
+                </div>
+                <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span class="text-gray-600">Ø Gewicht</span>
+                    <span class="font-semibold text-gray-800" id="avg-weight">-</span>
+                </div>
+                <div class="flex justify-between items-center py-2">
+                    <span class="text-gray-600">Training (min/Woche)</span>
+                    <span class="font-semibold text-gray-800" id="avg-training">-</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add Entry View -->
+    <main id="add-view" class="p-4 hidden slide-in">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6">Neuer Eintrag</h2>
+        
+        <form id="entry-form" class="space-y-4">
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Datum</label>
+                <input type="date" id="input-datum" required
+                    class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500">
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Schritte</label>
+                    <input type="number" id="input-schritte" placeholder="0"
+                        class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 text-lg">
+                </div>
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Schlaf (h:mm)</label>
+                    <input type="text" id="input-schlaf" placeholder="7:30"
+                        class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 text-lg">
+                    <p class="text-xs text-gray-400 mt-1">Format: 7:30 oder 7.5</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Schlaf-Index</label>
+                    <input type="number" id="input-schlaf-index" step="0.1" max="100" placeholder="0-100"
+                        class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Gewicht (kg)</label>
+                    <input type="number" id="input-gewicht" step="0.1" placeholder="0.0"
+                        class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">HF Ruhe</label>
+                    <input type="number" id="input-hf-ruhe" placeholder="bpm"
+                        class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">HF Ø</label>
+                    <input type="number" id="input-hf-avg" placeholder="bpm"
+                        class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Aktivität (kcal)</label>
+                    <input type="number" id="input-energie" placeholder="0"
+                        class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Training (min)</label>
+                    <input type="number" id="input-training" placeholder="0"
+                        class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Notizen</label>
+                <textarea id="input-notizen" rows="3" placeholder="Wie war dein Tag?"
+                    class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none"></textarea>
+            </div>
+
+            <button type="submit" 
+                class="w-full card-gradient text-white font-semibold py-4 rounded-2xl shadow-lg active:scale-95 transition-transform">
+                💾 Speichern
+            </button>
+        </form>
+    </main>
+
+    <!-- History View -->
+    <main id="history-view" class="p-4 hidden slide-in">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">Verlauf</h2>
+        
+        <div class="flex gap-2 mb-4 overflow-x-auto pb-2">
+            <button onclick="loadHistory(7)" class="filter-btn px-4 py-2 bg-emerald-500 text-white rounded-full text-sm font-medium whitespace-nowrap" data-days="7">7 Tage</button>
+            <button onclick="loadHistory(30)" class="filter-btn px-4 py-2 bg-gray-200 text-gray-700 rounded-full text-sm font-medium whitespace-nowrap" data-days="30">30 Tage</button>
+            <button onclick="loadHistory(90)" class="filter-btn px-4 py-2 bg-gray-200 text-gray-700 rounded-full text-sm font-medium whitespace-nowrap" data-days="90">3 Monate</button>
+            <button onclick="loadHistory(365)" class="filter-btn px-4 py-2 bg-gray-200 text-gray-700 rounded-full text-sm font-medium whitespace-nowrap" data-days="365">1 Jahr</button>
+        </div>
+
+        <div id="history-list" class="space-y-3">
+            <!-- Dynamisch gefüllt -->
+        </div>
+    </main>
+
+    <!-- Success Toast -->
+    <div id="toast" class="fixed bottom-24 left-4 right-4 bg-emerald-500 text-white px-4 py-3 rounded-2xl shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center justify-between">
+        <span id="toast-message">Gespeichert!</span>
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+        </svg>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-6 py-2 z-50">
+        <div class="flex justify-around items-center">
+            <button onclick="showView('dashboard')" class="nav-item active flex flex-col items-center gap-1 py-2 px-3 text-gray-400 transition-colors" data-view="dashboard">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                </svg>
+                <span class="text-xs">Übersicht</span>
+            </button>
+            <button onclick="resetForm(); showView('add')" class="nav-item flex flex-col items-center gap-1 py-2 px-3 text-gray-400 transition-colors" data-view="add">
+                <div class="w-12 h-12 card-gradient rounded-full flex items-center justify-center -mt-6 shadow-lg">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                </div>
+                <span class="text-xs">Hinzufügen</span>
+            </button>
+            <button onclick="showView('history')" class="nav-item flex flex-col items-center gap-1 py-2 px-3 text-gray-400 transition-colors" data-view="history">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                </svg>
+                <span class="text-xs">Verlauf</span>
+            </button>
+        </div>
+    </nav>
+
+    <script src="app.js"></script>
+</body>
+</html>
