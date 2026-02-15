@@ -9,6 +9,8 @@ Ein modernes, selbstgehostetes Health-Tracking-System für persönliche Gesundhe
 ## ✨ Features
 
 - **📱 Mobile-First Design** - Optimiert für iPhone und Smartphones
+- **🤖 OpenClaw Kompatibel** - Nahtlose Integration mit OpenClaw Agenten
+- **🌍 Internationalisierung** - Deutsch & Englisch, metrische/imperiale Einheiten
 - **📊 Schöne Charts** - Schritte, Schlaf, Herzfrequenz mit Chart.js
 - **🚀 Schnelle Dateneingabe** - Einfaches Formular für alle Metriken
 - **📈 Statistiken** - Durchschnittswerte und Trends
@@ -28,6 +30,52 @@ health-dashboard/
 │   └── app.js        # App-Logik
 ├── db/               # SQLite Datenbank
 └── docker-compose.yml
+```
+
+## 🤖 OpenClaw Integration
+
+Open Health Server ist vollständig mit [OpenClaw](https://github.com/openclaw/openclaw) kompatibel!
+
+### Features für OpenClaw Agenten:
+
+- **🔑 Token-basierte Authentifizierung** - Sicherer API-Zugriff per Query-Parameter
+- **🌍 Mehrsprachig** - Automatische Spracherkennung (de/en) pro User
+- **⚖️ Flexible Einheiten** - Metrisch (kg) oder Imperial (lbs) pro User konfigurierbar
+- **📡 REST API** - Vollständige API für automatisierte Dateneingabe durch Agenten
+- **🔗 Echtzeit-Status** - Verbindungsüberwachung mit Offline-Erkennung
+
+### Beispiel: Agent greift auf Daten zu
+
+```bash
+# Konfiguration abrufen
+GET /api/user/config?token=YOUR_TOKEN
+
+# Gesundheitsdaten eintragen
+POST /api/health?token=YOUR_TOKEN
+Content-Type: application/json
+
+{
+  "datum": "2024-01-15",
+  "schritte": 10000,
+  "schlaf_stunden": 8.5,
+  "gewicht": 73.5
+}
+```
+
+### User-Konfiguration
+
+In `config.json` pro User einstellbar:
+
+```json
+{
+  "users": {
+    "Dominic": {
+      "token": "secure_token_here",
+      "language": "de",
+      "units": "metric"
+    }
+  }
+}
 ```
 
 ## 🚀 Schnellstart
