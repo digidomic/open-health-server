@@ -4,6 +4,7 @@ Ein modernes, selbstgehostetes Health-Tracking-System für persönliche Gesundhe
 
 ![Open Health Server](https://img.shields.io/badge/version-1.0.0-emerald)
 ![License](https://img.shields.io/badge/license-MIT-blue)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/donate?hosted_button_id=TDVLA45EDEXRC)
 
 ## ✨ Features
 
