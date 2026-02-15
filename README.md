@@ -3,7 +3,7 @@
 Ein modernes, selbstgehostetes Health-Tracking-System für persönliche Gesundheitsdaten.
 
 ![Open Health Server](https://img.shields.io/badge/version-1.0.0-emerald)
-![License](https://img.shields.io/badge/license-MIT-blue)
+![License](https://img.shields.io/badge/license-CC%20BY--NC--ND%204.0-lightgrey)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/donate?hosted_button_id=TDVLA45EDEXRC)
 
 ## ✨ Features
@@ -150,8 +150,15 @@ curl -X POST http://localhost:8000/api/health \
 
 ## 📄 Lizenz
 
-MIT License - Open Health Server
+Dieses Projekt ist unter der **Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International** Lizenz lizenziert.
 
----
+**Was das bedeutet:**
+- ✅ Du darfst den Code ansehen und lernen
+- ✅ Du darfst ihn für private Zwecke nutzen
+- ❌ Du darfst ihn nicht verkaufen
+- ❌ Du darfst ihn nicht modifizieren oder abwandeln
+- ❌ Du darfst kein eigenes Projekt daraus machen
 
-Entwickelt mit ❤️ für Self-Hosting
+Für kommerzielle Nutzung oder Abwandlungen bitte Kontakt aufnehmen.
+
+[![CC BY-NC-ND 4.0](https://licensebuttons.net/l/by-nc-nd/4.0/88x31.png)](https://creativecommons.org/licenses/by-nc-nd/4.0/)
