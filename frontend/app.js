@@ -344,6 +344,12 @@ function updateNavigationButtons() {
     const prevBtn = document.getElementById('prev-day-btn');
     const nextBtn = document.getElementById('next-day-btn');
     
+    if (allEntries.length === 0) {
+        prevBtn.disabled = true;
+        nextBtn.disabled = true;
+        return;
+    }
+    
     prevBtn.disabled = currentEntryIndex >= allEntries.length - 1;
     nextBtn.disabled = currentEntryIndex <= 0;
 }
@@ -419,6 +425,7 @@ async function initDashboard() {
     } catch (err) {
         console.error('Dashboard error:', err);
     }
+    updateNavigationButtons();
 }
 
 // Charts

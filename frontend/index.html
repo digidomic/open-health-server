@@ -113,13 +113,13 @@
         <div class="mb-6">
             <h2 class="text-2xl font-bold text-gray-800" id="greeting" style="opacity: 0; transition: opacity 0.3s;"><span id="greeting-name"></span></h2>
             <div class="flex items-center justify-center gap-4 mt-2">
-                <button id="prev-day-btn" onclick="navigateDay(-1)" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed" disabled>
+                <button id="prev-day-btn" onclick="navigateDay(1)" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed">
                     <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                     </svg>
                 </button>
                 <p class="text-gray-500 text-sm font-medium" id="today-date"></p>
-                <button id="next-day-btn" onclick="navigateDay(1)" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed" disabled>
+                <button id="next-day-btn" onclick="navigateDay(-1)" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed">
                     <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                     </svg>
