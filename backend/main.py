@@ -233,6 +233,11 @@ def delete_entry(
     db.commit()
     return {"message": "Entry deleted"}
 
+@app.get("/health")
+def health_check():
+    """Simple health check endpoint for monitoring"""
+    return {"status": "healthy", "service": "health-tracker-api"}
+
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 8000))
     uvicorn.run(app, host="0.0.0.0", port=port)
