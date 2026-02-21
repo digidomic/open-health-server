@@ -5,98 +5,95 @@ const API_BASE = `http://${window.location.hostname}:8000`;
 const urlParams = new URLSearchParams(window.location.search);
 const AUTH_TOKEN = urlParams.get('token');
 
-// Check for token and show access denied if missing
-if (!AUTH_TOKEN) {
-    // Detect language from browser
-    const browserLang = navigator.language || navigator.userLanguage || 'en';
-    const isGerman = browserLang.toLowerCase().startsWith('de');
-    
-    const texts = {
-        de: {
-            title: 'Zugriff verweigert',
-            message: 'Ein gültiger Authentifizierungs-Token ist erforderlich, um auf diese Seite zuzugreifen.',
-            example: 'Beispiel',
-            help: 'Bitte rufen Sie diese Seite mit einem Token auf:',
-            lockAlt: 'Gesperrt'
-        },
-        en: {
-            title: 'Access Denied',
-            message: 'A valid authentication token is required to access this page.',
-            example: 'Example',
-            help: 'Please access this page with a token:',
-            lockAlt: 'Locked'
-        }
-    };
-    
-    const t = isGerman ? texts.de : texts.en;
-    const exampleUrl = `${window.location.origin}${window.location.pathname}?token=your-token-here`;
-    
-    document.addEventListener('DOMContentLoaded', () => {
-        document.body.innerHTML = `
-            <!DOCTYPE html>
-            <html lang="${isGerman ? 'de' : 'en'}" class="antialiased">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>${t.title} | Open Health Server</title>
-                <script src="https://cdn.tailwindcss.com"><\/script>
-                <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-                <style>
-                    * { font-family: 'Inter', sans-serif; box-sizing: border-box; }
-                    html { height: 100%; }
-                    body { min-height: 100vh; margin: 0; }
-                    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-                    .animate-fade-in { animation: fadeIn 0.5s ease-out; }
-                    @keyframes pulse-slow { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
-                    .animate-pulse-slow { animation: pulse-slow 2s infinite; }
-                </style>
-            </head>
-            <body class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
-                <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1rem;">
-                    <div class="animate-fade-in" style="width: 100%; max-width: 448px;">
-                    <!-- Card -->
-                    <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-                        <!-- Header with icon -->
-                        <div class="bg-gradient-to-r from-red-500 to-red-600 p-8 text-center">
-                            <div class="w-20 h-20 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center mx-auto mb-4 animate-pulse-slow">
-                                <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                                </svg>
-                            </div>
-                            <h1 class="text-2xl font-bold text-white">${t.title}</h1>
+// Detect language from browser for error messages
+const browserLang = navigator.language || navigator.userLanguage || 'en';
+const isGerman = browserLang.toLowerCase().startsWith('de');
+
+const texts = {
+    de: {
+        title: 'Zugriff verweigert',
+        message: 'Kein oder ungültiger Token angegeben. Ein gültiger Authentifizierungs-Token ist erforderlich.',
+        help: 'Bitte rufen Sie diese Seite mit einem gültigen Token auf:',
+    },
+    en: {
+        title: 'Access Denied',
+        message: 'No or invalid token provided. A valid authentication token is required.',
+        help: 'Please access this page with a valid token:',
+    }
+};
+
+const t = isGerman ? texts.de : texts.en;
+const exampleUrl = `${window.location.origin}${window.location.pathname}?token=your-token-here`;
+
+// Function to show access denied page
+function showAccessDenied() {
+    document.body.innerHTML = `
+        <!DOCTYPE html>
+        <html lang="${isGerman ? 'de' : 'en'}" class="antialiased">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>${t.title} | Open Health Server</title>
+            <script src="https://cdn.tailwindcss.com"><\/script>
+            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+            <style>
+                * { font-family: 'Inter', sans-serif; box-sizing: border-box; }
+                html { height: 100%; }
+                body { min-height: 100vh; margin: 0; }
+                @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+                .animate-fade-in { animation: fadeIn 0.5s ease-out; }
+                @keyframes pulse-slow { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+                .animate-pulse-slow { animation: pulse-slow 2s infinite; }
+            </style>
+        </head>
+        <body class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+            <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1rem;">
+                <div class="animate-fade-in" style="width: 100%; max-width: 448px;">
+                <!-- Card -->
+                <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+                    <!-- Header with icon -->
+                    <div class="bg-gradient-to-r from-red-500 to-red-600 p-8 text-center">
+                        <div class="w-20 h-20 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center mx-auto mb-4 animate-pulse-slow">
+                            <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                            </svg>
                         </div>
-                        
-                        <!-- Content -->
-                        <div class="p-8">
-                            <p class="text-gray-600 dark:text-gray-300 text-center mb-6 leading-relaxed">
-                                ${t.message}
-                            </p>
-                            
-                            <!-- Code example box -->
-                            <div class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
-                                <p class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold mb-2">${t.help}</p>
-                                <code class="block bg-gray-900 text-green-400 px-4 py-3 rounded-lg text-sm font-mono break-all">
-                                    ${exampleUrl}
-                                </code>
-                            </div>
-                            
-                            <!-- Footer -->
-                            <div class="mt-6 text-center">
-                                <p class="text-xs text-gray-400 dark:text-gray-500">
-                                    Open Health Server © ${new Date().getFullYear()}
-                                </p>
-                            </div>
-                        </div>
+                        <h1 class="text-2xl font-bold text-white">${t.title}</h1>
                     </div>
                     
-                    <!-- Decorative elements -->
+                    <!-- Content -->
+                    <div class="p-8">
+                        <p class="text-gray-600 dark:text-gray-300 text-center mb-6 leading-relaxed">
+                            ${t.message}
+                        </p>
+                        
+                        <!-- Code example box -->
+                        <div class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
+                            <p class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold mb-2">${t.help}</p>
+                            <code class="block bg-gray-900 text-green-400 px-4 py-3 rounded-lg text-sm font-mono break-all">
+                                ${exampleUrl}
+                            </code>
+                        </div>
+                        
+                        <!-- Footer -->
+                        <div class="mt-6 text-center">
+                            <p class="text-xs text-gray-400 dark:text-gray-500">
+                                Open Health Server © ${new Date().getFullYear()}
+                            </p>
+                        </div>
+                    </div>
                 </div>
-            </body>
-            </html>
-        `;
-    });
-    throw new Error('Authentication token required');
+                
+                <!-- Decorative elements -->
+            </div>
+        </body>
+        </html>
+    `;
 }
+
+// Validate token before loading app
+let tokenValid = false;
+let authCheckComplete = false;
 
 // Helper function to add token to URL
 function apiUrl(path) {
@@ -255,6 +252,28 @@ function showOfflineWarning() {
 
 // Initialize
 document.addEventListener('DOMContentLoaded', async () => {
+    // First: validate token
+    if (!AUTH_TOKEN) {
+        showAccessDenied();
+        return;
+    }
+    
+    // Validate token with backend
+    try {
+        const response = await fetch(apiUrl('/api/user/me'));
+        if (!response.ok) {
+            showAccessDenied();
+            return;
+        }
+        const user = await response.json();
+        currentUsername = user.username;
+        tokenValid = true;
+    } catch (err) {
+        showAccessDenied();
+        return;
+    }
+    
+    // Token is valid - proceed with app initialization
     await loadUserConfig();
     await loadTranslations(currentLang);
     initDate();
@@ -290,13 +309,10 @@ async function loadUserConfig() {
 // Load user info
 async function loadUserInfo() {
     try {
-        const user = await fetch(apiUrl('/api/user/me')).then(r => r.json());
-        currentUsername = user.username;
-        
         const greetingEl = document.getElementById('greeting');
         const nameEl = document.getElementById('greeting-name');
         
-        if (greetingEl && nameEl) {
+        if (greetingEl && nameEl && currentUsername) {
             nameEl.textContent = `${t('greeting.hello')} ${currentUsername}! 👋`;
             greetingEl.style.opacity = '1';
         }
