@@ -252,7 +252,7 @@ function showOfflineWarning() {
 
 // Initialize
 document.addEventListener('DOMContentLoaded', async () => {
-    // First: validate token
+    // First: check if token exists
     if (!AUTH_TOKEN) {
         showAccessDenied();
         return;
@@ -260,7 +260,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // Validate token with backend
     try {
-        const response = await fetch(apiUrl('/api/user/me'));
+        const response = await fetch(apiUrl('/api/user/me'), { cache: 'no-store' });
         if (!response.ok) {
             showAccessDenied();
             return;
@@ -269,30 +269,30 @@ document.addEventListener('DOMContentLoaded', async () => {
         currentUsername = user.username;
         tokenValid = true;
     } catch (err) {
+        console.error('Token validation error:', err);
         showAccessDenied();
         return;
     }
     
     // Token is valid - proceed with app initialization
-    await loadUserConfig();
-    await loadTranslations(currentLang);
-    initDate();
-    initDarkMode();
-    await loadUserInfo();
-    
-    // Check connection first
-    await checkConnection();
-    
-    if (isBackendConnected) {
-        loadAllEntries();
+    try {
+        await loadUserConfig();
+        await loadTranslations(currentLang);
+        initDate();
+        initDarkMode();
+        loadUserInfo();
+        
+        // Load data and init charts
+        await loadAllEntries();
         initForm();
         initCharts();
+        updateUIText();
+        
+        // Start periodic connection check
+        connectionCheckInterval = setInterval(checkConnection, 30000);
+    } catch (err) {
+        console.error('App initialization error:', err);
     }
-    
-    updateUIText();
-    
-    // Start periodic connection check
-    connectionCheckInterval = setInterval(checkConnection, 30000); // Every 30 seconds
 });
 
 // Load user config (language + units)
@@ -307,17 +307,13 @@ async function loadUserConfig() {
 }
 
 // Load user info
-async function loadUserInfo() {
-    try {
-        const greetingEl = document.getElementById('greeting');
-        const nameEl = document.getElementById('greeting-name');
-        
-        if (greetingEl && nameEl && currentUsername) {
-            nameEl.textContent = `${t('greeting.hello')} ${currentUsername}! 👋`;
-            greetingEl.style.opacity = '1';
-        }
-    } catch (err) {
-        console.error('Error loading user info:', err);
+function loadUserInfo() {
+    const greetingEl = document.getElementById('greeting');
+    const nameEl = document.getElementById('greeting-name');
+    
+    if (greetingEl && nameEl && currentUsername) {
+        nameEl.textContent = `${t('greeting.hello')} ${currentUsername}! 👋`;
+        greetingEl.style.opacity = '1';
     }
 }
 
