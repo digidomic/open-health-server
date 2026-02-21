@@ -5,8 +5,25 @@ const API_BASE = `http://${window.location.hostname}:8000`;
 const urlParams = new URLSearchParams(window.location.search);
 const AUTH_TOKEN = urlParams.get('token');
 
+// Check for token and show access denied if missing
 if (!AUTH_TOKEN) {
-    alert('Fehlender Auth Token! Bitte URL mit ?token=... aufrufen.');
+    document.addEventListener('DOMContentLoaded', () => {
+        document.body.innerHTML = `
+            <div class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 max-w-md w-full text-center border border-gray-200 dark:border-gray-700">
+                    <div class="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                        </svg>
+                    </div>
+                    <h1 class="text-xl font-bold text-gray-800 dark:text-gray-200 mb-2">Access Denied</h1>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4">Token required. Please access this page with a valid authentication token.</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-500">Example: <code class="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">?token=your-token-here</code></p>
+                </div>
+            </div>
+        `;
+    });
+    throw new Error('Authentication token required');
 }
 
 // Helper function to add token to URL
