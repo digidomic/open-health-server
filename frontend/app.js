@@ -42,15 +42,18 @@ if (!AUTH_TOKEN) {
                 <script src="https://cdn.tailwindcss.com"><\/script>
                 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
                 <style>
-                    * { font-family: 'Inter', sans-serif; }
+                    * { font-family: 'Inter', sans-serif; box-sizing: border-box; }
+                    html { height: 100%; }
+                    body { min-height: 100vh; margin: 0; }
                     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
                     .animate-fade-in { animation: fadeIn 0.5s ease-out; }
                     @keyframes pulse-slow { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
                     .animate-pulse-slow { animation: pulse-slow 2s infinite; }
                 </style>
             </head>
-            <body class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
-                <div class="animate-fade-in w-full max-w-md">
+            <body class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+                <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1rem;">
+                    <div class="animate-fade-in" style="width: 100%; max-width: 448px;">
                     <!-- Card -->
                     <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
                         <!-- Header with icon -->
@@ -87,8 +90,6 @@ if (!AUTH_TOKEN) {
                     </div>
                     
                     <!-- Decorative elements -->
-                    <div class="absolute top-10 left-10 w-32 h-32 bg-red-500/10 rounded-full blur-3xl -z-10"></div>
-                    <div class="absolute bottom-10 right-10 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl -z-10"></div>
                 </div>
             </body>
             </html>
