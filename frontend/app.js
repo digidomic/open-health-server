@@ -276,19 +276,23 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // Token is valid - proceed with app initialization
     try {
+        // Reihenfolge ist wichtig:
+        // 1. Config laden (enthält Sprache)
         await loadUserConfig();
+        // 2. Translations laden (für t() Funktion)
         await loadTranslations(currentLang);
+        // 3. UI initialisieren
         initDate();
         initDarkMode();
         loadUserInfo();
         
-        // Load data and init charts
+        // 4. Daten laden
         await loadAllEntries();
         initForm();
         initCharts();
         updateUIText();
         
-        // Start periodic connection check
+        // 5. Connection check starten
         connectionCheckInterval = setInterval(checkConnection, 30000);
     } catch (err) {
         console.error('App initialization error:', err);
