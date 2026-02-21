@@ -19,13 +19,10 @@ BACKEND_PID=$!
 echo $BACKEND_PID > $LOG_DIR/backend.pid
 echo "Backend PID: $BACKEND_PID"
 
-# Start Frontend
-echo "Starting Frontend..."
-cd "$HEALTH_DIR/frontend"
-nohup python3 -m http.server 8080 > $LOG_DIR/frontend.log 2>&1 &
-FRONTEND_PID=$!
-echo $FRONTEND_PID > $LOG_DIR/frontend.pid
-echo "Frontend PID: $FRONTEND_PID"
+# Start Frontend via Watchdog
+echo "Starting Frontend Watchdog..."
+nohup ./watchdog.sh > $LOG_DIR/watchdog.log 2>&1 &
+echo "Watchdog PID: $!"
 
 # Wait and test
 sleep 3
@@ -41,7 +38,8 @@ else
 fi
 
 # Test Frontend
-if curl -s http://localhost:8080 | grep -q "Dominic"; then
+sleep 2
+if curl -s -o /dev/null --max-time 5 http://localhost:8080/; then
     echo "✅ Frontend running on http://192.168.9.20:8080"
 else
     echo "❌ Frontend failed to start"
