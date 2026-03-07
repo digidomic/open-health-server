@@ -2,6 +2,8 @@
 
 A self-hosted health tracking system with a web dashboard and REST API. Track your steps, sleep, heart rate, weight, and activity data.
 
+![Dashboard Screenshot](screenshot.png)
+
 ## Features
 
 - 📊 **Web Dashboard** - Mobile-responsive UI with charts and statistics
