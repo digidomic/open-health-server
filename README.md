@@ -32,6 +32,10 @@ This project was created to make health data accessible for **AI Agents** and **
 git clone https://github.com/digidomic/open-health-server.git
 cd open-health-server
 
+# Create config file (MANDATORY - edit with your tokens!)
+cp config.json.example config.json
+# Edit config.json and add your user tokens
+
 # Start with Docker Compose
 docker-compose up --build -d
 
