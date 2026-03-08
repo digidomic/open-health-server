@@ -4,34 +4,22 @@
 # Example paths (adjust to your system):
 #   - Linux: /home/username/open-health-server/config.json
 #   - Windows: C:\Users\username\open-health-server\config.json
-#   - Docker Volume: ohs-config:/app/config.json
 
 services:
   backend:
-    # Build from local Dockerfile
     build:
       context: ./backend
       dockerfile: Dockerfile
-    # Optional: Use pre-built image from Docker Hub (when available)
-    # image: digidomic/ohs-backend:latest
     container_name: ohs-backend
     ports:
       - "8000:8000"
     volumes:
-      # DATA: Persistent database storage using Docker volume
-      # (No permission issues, managed by Docker)
-      - ohs-data:/app/data
+      # DATA: SQLite database storage (bind mount)
+      # Entrypoint script will fix permissions automatically
+      - ./data:/app/data
       
       # CONFIG: User tokens and settings (REQUIRED)
-      # Change this to your config file location
-      # Format: /path/on/host:/path/in/container:ro
       - ./config.json:/app/config.json:ro
-      
-      # Alternative: Use absolute path
-      # - /home/dominic/open-health-server/config.json:/app/config.json:ro
-      
-      # Alternative: Use Docker named volume
-      # - ohs-config:/app/config.json:ro
       
     environment:
       - PYTHONUNBUFFERED=1
@@ -52,12 +40,9 @@ services:
         max-file: "3"
 
   frontend:
-    # Build from local Dockerfile
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    # Optional: Use pre-built image from Docker Hub (when available)
-    # image: digidomic/ohs-frontend:latest
     container_name: ohs-frontend
     ports:
       - "8080:8080"
@@ -83,11 +68,3 @@ networks:
   ohs-network:
     driver: bridge
     name: ohs-network
-
-# Persistent volumes for data storage
-volumes:
-  ohs-data:
-    driver: local
-  # Optional: Uncomment if you want to store config in a volume too
-  # ohs-config:
-  #   driver: local

@@ -18,6 +18,9 @@ COPY . .
 # Create data directory
 RUN mkdir -p /app/data
 
+# Make entrypoint executable
+RUN chmod +x /app/entrypoint.sh
+
 # Expose port
 EXPOSE 8000
 
@@ -25,8 +28,10 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
     CMD curl -f http://localhost:8000/health || exit 1
 
+# Entrypoint to fix permissions before starting
+ENTRYPOINT ["/app/entrypoint.sh"]
+
 # Run with Gunicorn + Uvicorn workers
-# Using 2 workers for smaller deployments, adjustable via environment
 CMD ["gunicorn", "-w", "2", "-k", "uvicorn.workers.UvicornWorker", \
      "--bind", "0.0.0.0:8000", \
      "--access-logfile", "-", \
