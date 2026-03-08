@@ -1,8 +1,8 @@
-#!/bin/bash
+#!/bin/sh
 set -e
 
-# Ensure data directory has correct permissions
-chmod 777 /app/data
+echo "Fixing permissions for /app/data..."
+chmod -R 777 /app/data 2>/dev/null || true
+echo "Permissions fixed. Starting application..."
 
-# Start the application
 exec "$@"
