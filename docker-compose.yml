@@ -16,7 +16,7 @@ services:
     volumes:
       # DATA: SQLite database storage (bind mount)
       # Entrypoint script will fix permissions automatically
-      - ./data:/app/data
+      - ./db:/app/db
       
       # CONFIG: User tokens and settings (REQUIRED)
       - ./config.json:/app/config.json:ro
