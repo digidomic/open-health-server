@@ -414,13 +414,20 @@
             
             <!-- Verlauf: Icon als Button -->
             <div class="flex flex-col items-center">
-                <button onclick="showView('history')" class="nav-item w-14 h-14 flex items-center justify-center rounded-full transition-colors" data-view="history" style="background: transparent; border: none;">
-                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
-                    </svg>
-                </button>
-                <span class="text-xs text-gray-400 mt-1">Verlauf</span>
-            </div>
+    <button 
+        onclick="showView('history')" 
+        class="nav-item w-14 h-14 flex items-center justify-center rounded-full transition-colors"
+        data-view="history"
+        style="background: transparent; border: none; padding:0;"
+    >
+        <svg class="w-7 h-7 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01">
+            </path>
+        </svg>
+    </button>
+    <span class="text-xs text-gray-400 mt-1">Verlauf</span>
+</div>
         </div>
     </nav>
 
