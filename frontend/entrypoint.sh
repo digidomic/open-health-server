@@ -6,6 +6,7 @@
 #          If set, this overrides API_HOST and API_PORT
 # API_HOST: Backend hostname (default: window.location.hostname)
 # API_PORT: Backend port (default: 8000)
+# API_PROTOCOL: http or https (default: http)
 
 if [ -n "$API_URL" ]; then
     # Use full URL if provided (for reverse proxy setups)
@@ -18,6 +19,7 @@ EOF
 else
     # Use host + port (for local/direct setups)
     API_PORT=${API_PORT:-8000}
+    API_PROTOCOL=${API_PROTOCOL:-http}
     
     if [ -n "$API_HOST" ]; then
         HOST_VALUE="\"$API_HOST\""
@@ -30,12 +32,12 @@ else
 const API_CONFIG = {
     host: ${HOST_VALUE},
     port: ${API_PORT},
-    protocol: '${API_PROTOCOL:-http}'
+    protocol: '${API_PROTOCOL}'
 };
 const API_BASE = \`\${API_CONFIG.protocol}://\${API_CONFIG.host}:\${API_CONFIG.port}\`;
 console.log("API configured via host/port:", API_BASE);
 EOF
-    echo "API configured: ${API_PROTOCOL:-http}://${API_HOST:-window.location.hostname}:${API_PORT}"
+    echo "API configured: ${API_PROTOCOL}://${API_HOST:-window.location.hostname}:${API_PORT}"
 fi
 
 # Start nginx

@@ -1,5 +1,5 @@
 # Production Docker Compose for Open Health Server
-# 
+#
 # IMPORTANT: Update the paths below to match your server setup!
 # Example paths (adjust to your system):
 #   - Linux: /home/username/open-health-server/config.json
@@ -12,7 +12,7 @@ services:
       dockerfile: Dockerfile
     container_name: ohs-backend
     ports:
-      - "8000:8000"
+      - "8002:8000"
     volumes:
       # DATA: SQLite database storage (bind mount)
       # Entrypoint script will fix permissions automatically
@@ -45,7 +45,7 @@ services:
       dockerfile: Dockerfile
     container_name: ohs-frontend
     ports:
-      - "8080:8080"
+      - "8095:8080"
     depends_on:
       backend:
         condition: service_healthy
@@ -53,15 +53,12 @@ services:
       # API Configuration - choose ONE of these options:
       
       # Option 1: Full URL (for reverse proxy setups)
-      # API_URL: https://ohsbackend.doanet.de
+      # - API_URL=https://ohsbackend.doanet.de
       
       # Option 2: Host + Port (for direct access)
-      # API_HOST: 192.168.9.23
-      # API_PORT: 8095
-      # API_PROTOCOL: http
-      
-      # Default (uses window.location.hostname:8000):
-      - API_PORT=8000
+      - API_HOST=192.168.9.23
+      - API_PORT=8002
+      - API_PROTOCOL=http
     restart: unless-stopped
     networks:
       - ohs-network
