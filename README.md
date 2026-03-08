@@ -177,7 +177,7 @@ open-health-server/
 
 ## License
 
-Backend & Frontend: MIT License
+Backend & Frontend: [CC BY-NC-ND 4.0](LICENSE) (Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International)
 
 ## Support
 
