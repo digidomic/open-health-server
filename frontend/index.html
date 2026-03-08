@@ -60,17 +60,16 @@
         /* Fix clickable area for nav items */
         .nav-item {
             cursor: pointer;
-            position: relative;
-            z-index: 51;
+            color: #9ca3af;
+        }
+        .nav-item.active {
+            color: #10b981;
+        }
+        .nav-item.active svg {
+            stroke: #10b981;
         }
         nav button {
             cursor: pointer !important;
-            background: transparent;
-            border: none;
-            outline: none;
-        }
-        nav button * {
-            pointer-events: none !important;
         }
         
         /* Dark Mode Styles */
@@ -390,31 +389,39 @@
     <!-- Bottom Navigation -->
     <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50" style="height: 80px;">
         
-        <!-- Übersicht Button -->
-        <button onclick="showView('dashboard')" class="nav-item active absolute flex flex-col items-center justify-start gap-1 text-gray-400 transition-colors" data-view="dashboard" style="left: 10%; transform: translateX(-50%); width: 70px; height: 48px; bottom: 8px;">
-            <svg class="w-6 h-6 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-            </svg>
-            <span class="text-xs pointer-events-none">Übersicht</span>
-        </button>
-        
-        <!-- Add Button (center, floating) -->
-        <button onclick="resetForm(); showView('add')" class="nav-item flex flex-col items-center justify-start gap-1 text-gray-400 transition-colors absolute" data-view="add" style="left: 50%; transform: translateX(-50%); width: 70px; height: 64px; bottom: 2px;">
-            <div class="w-12 h-12 card-gradient rounded-full flex items-center justify-center shadow-lg pointer-events-none">
-                <svg class="w-6 h-6 text-white pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                </svg>
+        <!-- Background layer for layout only -->
+        <div class="absolute inset-0 flex justify-around items-end pb-2">
+            
+            <!-- Übersicht: Icon als Button -->
+            <div class="flex flex-col items-center">
+                <button onclick="showView('dashboard')" class="nav-item active w-14 h-14 flex items-center justify-center rounded-full transition-colors" data-view="dashboard" style="background: transparent; border: none;">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                    </svg>
+                </button>
+                <span class="text-xs text-gray-400 mt-1">Übersicht</span>
             </div>
-            <span class="text-xs pointer-events-none">Hinzufügen</span>
-        </button>
-        
-        <!-- Verlauf Button -->
-        <button onclick="showView('history')" class="nav-item flex flex-col items-center justify-start gap-1 text-gray-400 transition-colors absolute" data-view="history" style="right: 10%; transform: translateX(50%); width: 70px; height: 48px; bottom: 8px;">
-            <svg class="w-6 h-6 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
-            </svg>
-            <span class="text-xs pointer-events-none">Verlauf</span>
-        </button>
+            
+            <!-- Add: Floating Icon als Button -->
+            <div class="flex flex-col items-center">
+                <button onclick="resetForm(); showView('add')" class="nav-item w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-colors card-gradient" data-view="add" style="border: none; margin-top: -20px;">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                </button>
+                <span class="text-xs text-gray-400 mt-1">Hinzufügen</span>
+            </div>
+            
+            <!-- Verlauf: Icon als Button -->
+            <div class="flex flex-col items-center">
+                <button onclick="showView('history')" class="nav-item w-14 h-14 flex items-center justify-center rounded-full transition-colors" data-view="history" style="background: transparent; border: none;">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                    </svg>
+                </button>
+                <span class="text-xs text-gray-400 mt-1">Verlauf</span>
+            </div>
+        </div>
     </nav>
 
     <script src="api-config.js"></script>
