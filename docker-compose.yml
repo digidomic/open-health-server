@@ -1,18 +1,35 @@
 version: '3.8'
 
+# Production Docker Compose for Open Health Server
+# 
+# IMPORTANT: Update the paths below to match your server setup!
+# Example paths (adjust to your system):
+#   - Linux: /home/username/open-health-server/config.json
+#   - Windows: C:\Users\username\open-health-server\config.json
+#   - Docker Volume: ohs-config:/app/config.json
+
 services:
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    image: digidomic/ohs-backend:latest
     container_name: ohs-backend
     ports:
       - "8000:8000"
     volumes:
-      # Persistent data storage
+      # DATA: SQLite database storage
+      # Change this to your preferred data location
       - ./data:/app/data
-      # Config file (read-only)
+      
+      # CONFIG: User tokens and settings (REQUIRED)
+      # Change this to your config file location
+      # Format: /path/on/host:/path/in/container:ro
       - ./config.json:/app/config.json:ro
+      
+      # Alternative: Use absolute path
+      # - /home/dominic/open-health-server/config.json:/app/config.json:ro
+      
+      # Alternative: Use Docker named volume
+      # - ohs-config:/app/config.json:ro
+      
     environment:
       - PYTHONUNBUFFERED=1
       - LOG_LEVEL=info
@@ -32,9 +49,7 @@ services:
         max-file: "3"
 
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
+    image: digidomic/ohs-frontend:latest
     container_name: ohs-frontend
     ports:
       - "8080:8080"
@@ -62,6 +77,9 @@ networks:
     name: ohs-network
 
 # Optional: Named volumes for persistent data
+# Uncomment if you want to use Docker volumes instead of bind mounts
 # volumes:
 #   ohs-data:
+#     driver: local
+#   ohs-config:
 #     driver: local
