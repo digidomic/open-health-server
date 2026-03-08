@@ -1,52 +1,71 @@
-# Open Health Server - Docker Production Setup
+# Open Health Server - Production Deployment
 
-## Quick Start
+## Quick Start (Production)
 
-### 1. Build und Start
 ```bash
-docker-compose up --build -d
-```
+# Clone repository
+git clone https://github.com/digidomic/open-health-server.git
+cd open-health-server
 
-### 2. Logs ansehen
-```bash
-# Alle Services
+# Create config
+cp config.json.example config.json
+# Edit config.json with your settings
+
+# Start services
+docker-compose up -d
+
+# View logs
 docker-compose logs -f
 
-# Nur Backend
+# Update (zero downtime)
+docker-compose pull
+docker-compose up -d
+```
+
+## Configuration
+
+### config.json
+Edit `config.json` to add users and tokens.
+
+### Environment Variables
+Create `.env` file:
+```env
+# Optional: Change ports
+FRONTEND_PORT=8080
+BACKEND_PORT=8000
+
+# Optional: Log level (debug, info, warning, error)
+LOG_LEVEL=info
+```
+
+### Data Persistence
+Data is stored in `./data/` directory. Backup this folder regularly:
+```bash
+# Backup
+tar czf backup-$(date +%Y%m%d).tar.gz data/
+
+# Restore
+tar xzf backup-20260308.tar.gz
+```
+
+## Monitoring
+
+### Health Checks
+- Backend: http://your-server:8000/health
+- Frontend: http://your-server:8080
+
+### Logs
+```bash
+# All services
+docker-compose logs
+
+# Specific service
 docker-compose logs -f backend
-
-# Nur Frontend
 docker-compose logs -f frontend
+
+# Last 100 lines
+docker-compose logs --tail=100
 ```
-
-### 3. Status prüfen
-```bash
-docker-compose ps
-```
-
-### 4. Stoppen
-```bash
-docker-compose down
-```
-
-### 5. Neustarten
-```bash
-docker-compose restart
-```
-
-## URLs
-
-- **Frontend:** http://localhost:8080
-- **Backend:** http://localhost:8000
-- **Health Check:** http://localhost:8000/health
-
-## Daten
-
-Die SQLite-Datenbank wird im `data/` Ordner gespeichert (persistenter Volume).
-
-## Config
-
-Die `config.json` wird als read-only Volume in den Backend-Container gemountet.
 
 ## Updates
 
@@ -55,5 +74,39 @@ Die `config.json` wird als read-only Volume in den Backend-Container gemountet.
 git pull
 
 # Rebuild and restart
+docker-compose down
+docker-compose up --build -d
+
+# Or update without build if only code changed
+docker-compose restart
+```
+
+## Troubleshooting
+
+### Container won't start
+```bash
+# Check logs
+docker-compose logs backend
+docker-compose logs frontend
+
+# Check disk space
+df -h
+
+# Check permissions
+ls -la data/
+```
+
+### Reset everything
+```bash
+docker-compose down -v
 docker-compose up --build -d
 ```
+
+## Security Notes
+
+- Backend runs as non-root user (`ohs`)
+- Frontend runs as `nginx` user
+- Config file is mounted read-only
+- Security headers are enabled
+- Gzip compression enabled
+- Logging limited to prevent disk fill
