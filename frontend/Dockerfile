@@ -10,6 +10,10 @@ COPY . /usr/share/nginx/html/
 # Copy custom nginx config
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
+# Copy entrypoint script
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 # Fix permissions for nginx
 RUN chmod -R 755 /usr/share/nginx/html
 
@@ -19,5 +23,8 @@ EXPOSE 8080
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD wget --no-verbose --tries=1 --spider http://localhost:8080/ || exit 1
+
+# Use entrypoint to configure API dynamically
+ENTRYPOINT ["/entrypoint.sh"]
 
 CMD ["nginx", "-g", "daemon off;"]

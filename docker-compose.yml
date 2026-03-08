@@ -49,6 +49,11 @@ services:
     depends_on:
       backend:
         condition: service_healthy
+    environment:
+      # API_PORT: The external port where the backend API is accessible
+      # Change this if you mapped the backend to a different port on your host
+      # Example: If backend is on port 8096, set API_PORT=8096
+      - API_PORT=8000
     restart: unless-stopped
     networks:
       - ohs-network

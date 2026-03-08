@@ -1,5 +1,5 @@
 // API Configuration
-const API_BASE = `http://${window.location.hostname}:8000`;
+// API_BASE is now defined in api-config.js
 
 // Get token from URL
 const urlParams = new URLSearchParams(window.location.search);
