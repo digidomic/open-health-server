@@ -18,9 +18,9 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      # DATA: SQLite database storage
-      # Change this to your preferred data location
-      - ./data:/app/data
+      # DATA: Persistent database storage using Docker volume
+      # (No permission issues, managed by Docker)
+      - ohs-data:/app/data
       
       # CONFIG: User tokens and settings (REQUIRED)
       # Change this to your config file location
@@ -84,10 +84,10 @@ networks:
     driver: bridge
     name: ohs-network
 
-# Optional: Named volumes for persistent data
-# Uncomment if you want to use Docker volumes instead of bind mounts
-# volumes:
-#   ohs-data:
-#     driver: local
-#   ohs-config:
-#     driver: local
+# Persistent volumes for data storage
+volumes:
+  ohs-data:
+    driver: local
+  # Optional: Uncomment if you want to store config in a volume too
+  # ohs-config:
+  #   driver: local
