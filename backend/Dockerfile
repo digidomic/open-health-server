@@ -1,9 +1,6 @@
 # Backend Dockerfile for Open Health Server - Production Ready
 FROM python:3.11-slim
 
-# Security: Create non-root user
-RUN groupadd -r ohs && useradd -r -g ohs ohs
-
 WORKDIR /app
 
 # Install curl for healthcheck
@@ -18,11 +15,8 @@ RUN pip install --no-cache-dir --upgrade pip \
 # Copy application code
 COPY . .
 
-# Create data directory and set permissions
-RUN mkdir -p /app/data && chown -R ohs:ohs /app
-
-# Switch to non-root user
-USER ohs
+# Create data directory
+RUN mkdir -p /app/data
 
 # Expose port
 EXPOSE 8000
