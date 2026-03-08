@@ -50,9 +50,17 @@ services:
       backend:
         condition: service_healthy
     environment:
-      # API_PORT: The external port where the backend API is accessible
-      # Change this if you mapped the backend to a different port on your host
-      # Example: If backend is on port 8096, set API_PORT=8096
+      # API Configuration - choose ONE of these options:
+      
+      # Option 1: Full URL (for reverse proxy setups)
+      # API_URL: https://ohsbackend.doanet.de
+      
+      # Option 2: Host + Port (for direct access)
+      # API_HOST: 192.168.9.23
+      # API_PORT: 8095
+      # API_PROTOCOL: http
+      
+      # Default (uses window.location.hostname:8000):
       - API_PORT=8000
     restart: unless-stopped
     networks:
