@@ -12,7 +12,7 @@ from database import init_db, get_db, HealthData
 from schemas import HealthDataCreate, HealthDataResponse, HealthStats
 
 # Load config
-CONFIG_PATH = os.path.join(os.path.dirname(__file__), '..', 'config.json')
+CONFIG_PATH = os.path.join(os.path.dirname(__file__), 'config.json')
 with open(CONFIG_PATH, 'r') as f:
     CONFIG = json.load(f)
 
