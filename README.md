@@ -4,6 +4,16 @@ A self-hosted health tracking system with a web dashboard and REST API. Track yo
 
 ![Dashboard Screenshot](assets/screenshot.png)
 
+## About
+
+This project was created to make health data accessible for **AI Agents** and **OpenClaw-compatible** systems. The REST API allows automated agents to read and write health data, enabling intelligent health coaching, automated tracking, and integration with voice assistants and automation systems.
+
+**Key Use Cases:**
+- 🤖 **AI Agent Integration** - Automated health coaching and reminders
+- 📱 **OpenClaw Compatible** - Works with OpenClaw automation systems
+- 🔗 **API-First Design** - Easy integration with any system that can make HTTP requests
+- 🏠 **Self-Hosted** - Your data stays on your own server
+
 ## Features
 
 - 📊 **Web Dashboard** - Mobile-responsive UI with charts and statistics
