@@ -501,16 +501,21 @@ function showView(viewName) {
     
     document.getElementById(viewName + '-view').classList.remove('hidden');
     
+    // Check if dark mode is active
+    const isDark = document.documentElement.classList.contains('dark');
+    const inactiveColor = isDark ? '#9ca3af' : '#6b7280';
+    const activeColor = '#10b981';
+    
     // Update navigation active states
     document.querySelectorAll('.nav-item').forEach(el => {
         el.classList.remove('active');
-        el.style.color = '#6b7280'; // Gray for inactive
+        el.style.color = inactiveColor;
     });
     
     const activeBtn = document.querySelector(`[data-view="${viewName}"]`);
     if (activeBtn) {
         activeBtn.classList.add('active');
-        activeBtn.style.color = '#10b981'; // Green for active
+        activeBtn.style.color = activeColor;
     }
     
     if (viewName === 'history') {
