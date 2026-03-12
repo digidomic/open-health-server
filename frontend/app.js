@@ -501,12 +501,17 @@ function showView(viewName) {
     
     document.getElementById(viewName + '-view').classList.remove('hidden');
     
+    // Update navigation active states
     document.querySelectorAll('.nav-item').forEach(el => {
-        el.classList.remove('active', 'text-emerald-500');
-        el.classList.add('text-gray-400');
+        el.classList.remove('active');
+        el.style.color = '#6b7280'; // Gray for inactive
     });
-    document.querySelector(`[data-view="${viewName}"]`).classList.add('active');
-    document.querySelector(`[data-view="${viewName}"]`).classList.remove('text-gray-400');
+    
+    const activeBtn = document.querySelector(`[data-view="${viewName}"]`);
+    if (activeBtn) {
+        activeBtn.classList.add('active');
+        activeBtn.style.color = '#10b981'; // Green for active
+    }
     
     if (viewName === 'history') {
         loadHistory(7);
