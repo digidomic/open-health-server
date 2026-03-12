@@ -392,39 +392,46 @@
         <!-- Übersicht Button -->
         <button onclick="showView('dashboard')" 
                 class="nav-item active flex flex-col items-center justify-end gap-1 w-20 h-16 text-gray-400 hover:text-gray-600 transition-colors" 
+
+    <!-- Bottom Navigation - Verhindert Klick-Probleme mit hohem z-index -->
+    <div id="bottom-nav" style="position: fixed; bottom: 0; left: 0; right: 0; height: 80px; z-index: 99999; background-color: white; border-top: 1px solid #e5e7eb; display: flex; justify-content: space-around; align-items: flex-end; padding-bottom: 12px; padding-top: 8px;">
+        
+        <!-- Übersicht Button -->
+        <button onclick="showView('dashboard')" 
+                class="nav-item active"
                 data-view="dashboard"
-                style="background: transparent; border: none; cursor: pointer;"
+                style="background: transparent; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 4px; width: 80px; height: 64px; color: #9ca3af;"
                 aria-label="Übersicht">
-            <svg class="w-7 h-7 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg style="width: 28px; height: 28px; pointer-events: none;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
             </svg>
-            <span class="text-xs pointer-events-none">Übersicht</span>
+            <span style="font-size: 12px; pointer-events: none;">Übersicht</span>
         </button>
         
         <!-- Add Button (center, floating) -->
         <button onclick="resetForm(); showView('add')" 
-                class="nav-item flex flex-col items-center justify-start w-20 h-20 -mt-8 text-gray-400 hover:text-gray-600 transition-colors"
+                class="nav-item"
                 data-view="add"
-                style="background: transparent; border: none; cursor: pointer;"
+                style="background: transparent; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; width: 80px; height: 80px; margin-top: -32px; color: #9ca3af;"
                 aria-label="Hinzufügen">
-            <div class="w-14 h-14 card-gradient rounded-full flex items-center justify-center shadow-lg pointer-events-none">
-                <svg class="w-7 h-7 text-white pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="card-gradient" style="width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); pointer-events: none;">
+                <svg style="width: 28px; height: 28px; color: white; pointer-events: none;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                 </svg>
             </div>
-            <span class="text-xs mt-1 pointer-events-none">Hinzufügen</span>
+            <span style="font-size: 12px; margin-top: 4px; pointer-events: none;">Hinzufügen</span>
         </button>
         
         <!-- Verlauf Button -->
         <button onclick="showView('history')" 
-                class="nav-item flex flex-col items-center justify-end gap-1 w-20 h-16 text-gray-400 hover:text-gray-600 transition-colors"
+                class="nav-item"
                 data-view="history"
-                style="background: transparent; border: none; cursor: pointer;"
+                style="background: transparent; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 4px; width: 80px; height: 64px; color: #9ca3af;"
                 aria-label="Verlauf">
-            <svg class="w-7 h-7 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg style="width: 28px; height: 28px; pointer-events: none;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
             </svg>
-            <span class="text-xs pointer-events-none">Verlauf</span>
+            <span style="font-size: 12px; pointer-events: none;">Verlauf</span>
         </button>
         
     </div>
