@@ -387,51 +387,23 @@
     </div>
 
     <!-- Bottom Navigation -->
-    <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 flex justify-around items-end pb-3 pt-2" style="height: 80px;">
-        
-        <!-- Übersicht Button -->
-        <button onclick="showView('dashboard')" 
-                class="nav-item active flex flex-col items-center justify-end gap-1 w-20 h-16 text-gray-400 hover:text-gray-600 transition-colors" 
 
-    <!-- Bottom Navigation - DEBUG VERSION -->
-    <div id="bottom-nav" style="position: fixed; bottom: 0; left: 0; right: 0; height: 80px; z-index: 99999; background-color: #ff0000; border-top: 3px solid #000; display: flex; justify-content: space-around; align-items: flex-end; padding-bottom: 12px; padding-top: 8px;">
+    <!-- Bottom Navigation - FIXED -->
+    <div style="position: fixed; bottom: 0; left: 0; right: 0; height: 80px; background: #ff0000; border-top: 3px solid #000; z-index: 99999; display: flex; justify-content: space-around; align-items: center;">
         
-        <!-- Übersicht Button -->
-        <button onclick="showView('dashboard')" 
-                class="nav-item active"
-                data-view="dashboard"
-                style="background: #00ff00; border: 2px solid #000; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 4px; width: 80px; height: 64px; color: #000;"
-                aria-label="Übersicht">
-            <svg style="width: 28px; height: 28px; pointer-events: none; stroke: #000; stroke-width: 2;" fill="none" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-            </svg>
-            <span style="font-size: 12px; pointer-events: none; color: #000; font-weight: bold;">Übersicht</span>
+        <button onclick="showView('dashboard')" style="width: 80px; height: 70px; background: #00ff00; border: 2px solid #000; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer;">
+            <span style="font-size: 24px;">🏠</span>
+            <span style="font-size: 10px; font-weight: bold; color: #000;">Übersicht</span>
         </button>
         
-        <!-- Add Button (center, floating) -->
-        <button onclick="resetForm(); showView('add')" 
-                class="nav-item"
-                data-view="add"
-                style="background: #0000ff; border: 2px solid #fff; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; width: 80px; height: 80px; margin-top: -32px; color: #fff;"
-                aria-label="Hinzufügen">
-            <div style="width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); pointer-events: none; background: #ffff00; border: 3px solid #000;">
-                <svg style="width: 28px; height: 28px; pointer-events: none; stroke: #000; stroke-width: 3;" fill="none" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
-                </svg>
-            </div>
-            <span style="font-size: 12px; margin-top: 4px; pointer-events: none; color: #fff; font-weight: bold;">Hinzufügen</span>
+        <button onclick="resetForm(); showView('add')" style="width: 80px; height: 70px; background: #0000ff; border: 2px solid #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer;">
+            <span style="font-size: 32px;">➕</span>
+            <span style="font-size: 10px; font-weight: bold; color: #fff;">Hinzufügen</span>
         </button>
         
-        <!-- Verlauf Button -->
-        <button onclick="showView('history')" 
-                class="nav-item"
-                data-view="history"
-                style="background: #ff00ff; border: 2px solid #000; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 4px; width: 80px; height: 64px; color: #000;"
-                aria-label="Verlauf">
-            <svg style="width: 28px; height: 28px; pointer-events: none; stroke: #000; stroke-width: 2;" fill="none" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
-            </svg>
-            <span style="font-size: 12px; pointer-events: none; color: #000; font-weight: bold;">Verlauf</span>
+        <button onclick="showView('history')" style="width: 80px; height: 70px; background: #ff00ff; border: 2px solid #000; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer;">
+            <span style="font-size: 24px;">📋</span>
+            <span style="font-size: 10px; font-weight: bold; color: #000;">Verlauf</span>
         </button>
         
     </div>
