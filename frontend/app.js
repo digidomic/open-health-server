@@ -1170,3 +1170,131 @@ function showToast(message) {
         toast.classList.add('translate-y-20', 'opacity-0');
     }, 3000);
 }
+
+// ============ API KEY MANAGEMENT ============
+
+// Load API keys
+async function loadApiKeys() {
+    try {
+        const response = await apiFetch('/api/auth/apikeys');
+        if (!response.ok) {
+            if (response.status === 401) {
+                showLogin();
+                return;
+            }
+            throw new Error('Failed to load API keys');
+        }
+        
+        const keys = await response.json();
+        displayApiKeys(keys);
+    } catch (err) {
+        console.error('Error loading API keys:', err);
+        document.getElementById('apikeys-list').innerHTML = 
+            '<p class="text-red-500 text-sm">Fehler beim Laden der API Keys</p>';
+    }
+}
+
+// Display API keys
+function displayApiKeys(keys) {
+    const list = document.getElementById('apikeys-list');
+    
+    if (!keys || keys.length === 0) {
+        list.innerHTML = '<p class="text-gray-500 text-sm">Keine API Keys vorhanden</p>';
+        return;
+    }
+    
+    list.innerHTML = keys.map(key => `
+        <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+            <div>
+                <p class="font-medium text-gray-800 dark:text-white">${key.name}</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400">${key.key_prefix}****</p>
+            </div>
+            <button onclick="revokeApiKey(${key.id})" 
+                class="px-3 py-1 bg-red-500 text-white text-sm rounded-lg hover:bg-red-600 transition-colors">
+                Löschen
+            </button>
+        </div>
+    `).join('');
+}
+
+// Create new API key
+async function handleCreateApiKey(event) {
+    event.preventDefault();
+    
+    const name = document.getElementById('apikey-name').value;
+    
+    try {
+        const formData = new FormData();
+        formData.append('name', name);
+        
+        const response = await apiFetch('/api/auth/apikeys', {
+            method: 'POST',
+            body: formData
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            
+            // Show the new key
+            document.getElementById('new-apikey-value').textContent = data.api_key;
+            document.getElementById('new-apikey-display').classList.remove('hidden');
+            
+            // Reset form
+            document.getElementById('apikey-form').reset();
+            
+            // Reload keys list
+            await loadApiKeys();
+            
+            showToast('✅ API Key erstellt!');
+        } else {
+            const error = await response.json();
+            showToast('❌ ' + (error.detail || 'Fehler'));
+        }
+    } catch (err) {
+        console.error('Error creating API key:', err);
+        showToast('❌ Verbindungsfehler');
+    }
+}
+
+// Revoke API key
+async function revokeApiKey(keyId) {
+    if (!confirm('Möchtest du diesen API Key wirklich löschen?')) {
+        return;
+    }
+    
+    try {
+        const response = await apiFetch(`/api/auth/apikeys/${keyId}`, {
+            method: 'DELETE'
+        });
+        
+        if (response.ok) {
+            showToast('🗑️ API Key gelöscht');
+            await loadApiKeys();
+        } else {
+            const error = await response.json();
+            showToast('❌ ' + (error.detail || 'Fehler'));
+        }
+    } catch (err) {
+        console.error('Error revoking API key:', err);
+        showToast('❌ Verbindungsfehler');
+    }
+}
+
+// Copy API key to clipboard
+function copyApiKey() {
+    const key = document.getElementById('new-apikey-value').textContent;
+    navigator.clipboard.writeText(key).then(() => {
+        showToast('📋 Kopiert!');
+    }).catch(() => {
+        showToast('❌ Konnte nicht kopieren');
+    });
+}
+
+// Update showView to load API keys when switching to that view
+const originalShowView = showView;
+showView = function(view) {
+    originalShowView(view);
+    if (view === 'apikeys') {
+        loadApiKeys();
+    }
+};
