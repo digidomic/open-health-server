@@ -840,6 +840,43 @@ async function loadSleepChart() {
         const canvas = document.getElementById('sleepChart');
         if (!canvas) return;
         
+        // Check if we have any data
+        const hasData = data.values && data.values.some(v => v > 0);
+        if (!hasData) {
+            console.log('No sleep data available');
+            // Show placeholder or empty chart
+            const ctx = canvas.getContext('2d');
+            if (sleepChart) sleepChart.destroy();
+            sleepChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Keine Daten'],
+                    datasets: [{
+                        label: t('stats.sleep'),
+                        data: [0],
+                        backgroundColor: 'rgba(59, 130, 246, 0.3)',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { 
+                            grid: { color: colors.gridColor },
+                            ticks: { color: colors.textColor }
+                        },
+                        x: { 
+                            grid: { display: false },
+                            ticks: { color: colors.textColor }
+                        }
+                    }
+                }
+            });
+            return;
+        }
+        
         const ctx = canvas.getContext('2d');
         if (sleepChart) sleepChart.destroy();
         
@@ -896,8 +933,60 @@ async function loadHRChart() {
         const canvas = document.getElementById('hrChart');
         if (!canvas) return;
         
+        // Check if we have any data
+        const hasRestData = dataRest.values && dataRest.values.some(v => v > 0);
+        const hasAvgData = dataAvg.values && dataAvg.values.some(v => v > 0);
+        
         const ctx = canvas.getContext('2d');
         if (hrChart) hrChart.destroy();
+        
+        if (!hasRestData && !hasAvgData) {
+            console.log('No HR data available');
+            // Show placeholder
+            hrChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Keine Daten'],
+                    datasets: [
+                        {
+                            label: t('stats.restingHR'),
+                            data: [0],
+                            borderColor: 'rgba(139, 92, 246, 0.3)',
+                            backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                            fill: false
+                        },
+                        {
+                            label: t('stats.avgHR'),
+                            data: [0],
+                            borderColor: 'rgba(236, 72, 153, 0.3)',
+                            backgroundColor: 'rgba(236, 72, 153, 0.1)',
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { 
+                            position: 'top',
+                            labels: { color: colors.textColor }
+                        }
+                    },
+                    scales: {
+                        y: { 
+                            grid: { color: colors.gridColor },
+                            ticks: { color: colors.textColor }
+                        },
+                        x: { 
+                            grid: { display: false },
+                            ticks: { color: colors.textColor }
+                        }
+                    }
+                }
+            });
+            return;
+        }
         
         hrChart = new Chart(ctx, {
             type: 'line',
