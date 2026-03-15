@@ -1207,7 +1207,7 @@ function displayApiKeys(keys) {
         <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
             <div>
                 <p class="font-medium text-gray-800 dark:text-white">${key.name}</p>
-                <p class="text-xs text-gray-500 dark:text-gray-400">${key.key_prefix}****</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400">${key.prefix || '****'}****</p>
             </div>
             <button onclick="revokeApiKey(${key.id})" 
                 class="px-3 py-1 bg-red-500 text-white text-sm rounded-lg hover:bg-red-600 transition-colors">
