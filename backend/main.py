@@ -27,9 +27,11 @@ if os.path.exists(CONFIG_PATH):
 
 app = FastAPI(title="Health Tracker API", version="2.0.0")
 
+# CORS: Allow all origins but with credentials support
+# For production, restrict this to your actual domain
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://192.168.9.23:8095", "http://localhost:8080", "http://localhost:3000", "http://127.0.0.1:8080"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
