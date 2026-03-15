@@ -19,7 +19,17 @@ from sqlalchemy.orm import relationship
 from database import Base, engine
 
 # Configuration
-SECRET_KEY = os.getenv("SECRET_KEY", secrets.token_urlsafe(32))
+# Use persistent secret key from file or generate new one
+SECRET_KEY_FILE = "/app/db/.secret_key"
+if os.path.exists(SECRET_KEY_FILE):
+    with open(SECRET_KEY_FILE, 'r') as f:
+        SECRET_KEY = f.read().strip()
+else:
+    SECRET_KEY = secrets.token_urlsafe(32)
+    # Save for persistence
+    with open(SECRET_KEY_FILE, 'w') as f:
+        f.write(SECRET_KEY)
+
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_DAYS = 30
 
