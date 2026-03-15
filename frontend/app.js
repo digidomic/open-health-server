@@ -752,18 +752,29 @@ async function initDashboard() {
     updateNavigationButtons();
 }
 
-// Charts
+// Charts - verzögertes Laden um Race Conditions zu vermeiden
+let chartsInitialized = false;
+
 function initCharts() {
-    // Load all charts in parallel
-    Promise.all([
-        loadStepsChart(7),
-        loadSleepChart(),
-        loadHRChart()
-    ]).then(() => {
-        console.log('All charts loaded');
-    }).catch(err => {
-        console.error('Error loading charts:', err);
-    });
+    if (chartsInitialized) {
+        // Charts bereits initialisiert - nur aktualisieren
+        updateCharts();
+        return;
+    }
+    
+    chartsInitialized = true;
+    
+    // Sequentielles Laden statt parallel
+    setTimeout(() => loadStepsChart(7), 0);
+    setTimeout(() => loadSleepChart(), 100);
+    setTimeout(() => loadHRChart(), 200);
+}
+
+function updateCharts() {
+    // Bestehende Charts aktualisieren wenn Daten vorhanden
+    if (stepsChart) loadStepsChart(7);
+    if (sleepChart) loadSleepChart();
+    if (hrChart) loadHRChart();
 }
 
 function updateChartColors() {
