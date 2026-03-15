@@ -119,6 +119,7 @@ async def startup_event():
     db = SessionLocal()
     try:
         user_count = db.query(User).count()
+        print(f"DEBUG: User count = {user_count}")
         if user_count == 0:
             # Create default user with simple password hash
             # Use a pre-computed hash for "admin" to avoid bcrypt issues
@@ -138,10 +139,14 @@ async def startup_event():
             print("Password: admin")
             print("Please change the password after first login!")
             print("=" * 60)
+        else:
+            print(f"DEBUG: {user_count} users already exist, skipping default user creation")
     except Exception as e:
         print(f"Error creating default user: {e}")
         import traceback
         traceback.print_exc()
+    finally:
+        db.close()
     finally:
         db.close()
 
