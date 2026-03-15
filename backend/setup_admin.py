@@ -29,7 +29,7 @@ try:
         admin = User(
             username='admin',
             email='admin@localhost',
-            hashed_password='$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW',
+            hashed_password='$2b$12$9kAyZj9EYsw2zr4DO4a6w.whbAWh4heVqKofNzdA0S4q6mVuuSquC',
             language='de',
             units='metric',
             is_active=True
