@@ -49,6 +49,11 @@ function showApp() {
     document.querySelector('.bottom-nav').style.display = 'flex';
     document.querySelector('header').style.display = 'block';
     
+    // Check if setup is needed (default admin)
+    if (currentUser && currentUser.username === 'admin') {
+        showSetupModal();
+    }
+    
     // Initialize dashboard
     initDashboard();
     updateGreeting();
@@ -109,6 +114,78 @@ async function logout() {
     document.getElementById('login-username').value = '';
     document.getElementById('login-password').value = '';
     document.getElementById('login-error').classList.add('hidden');
+}
+
+// Show setup modal for default admin user
+function showSetupModal() {
+    const modal = document.getElementById('setup-modal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+
+// Hide setup modal
+function hideSetupModal() {
+    const modal = document.getElementById('setup-modal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+}
+
+// Handle setup form submission
+async function handleSetup(event) {
+    event.preventDefault();
+    
+    const newUsername = document.getElementById('setup-username').value;
+    const newPassword = document.getElementById('setup-password').value;
+    const confirmPassword = document.getElementById('setup-password-confirm').value;
+    const errorDiv = document.getElementById('setup-error');
+    
+    // Validate
+    if (newPassword !== confirmPassword) {
+        errorDiv.textContent = 'Passwörter stimmen nicht überein';
+        errorDiv.classList.remove('hidden');
+        return;
+    }
+    
+    if (newPassword.length < 6) {
+        errorDiv.textContent = 'Passwort muss mindestens 6 Zeichen haben';
+        errorDiv.classList.remove('hidden');
+        return;
+    }
+    
+    try {
+        const formData = new FormData();
+        formData.append('new_username', newUsername);
+        formData.append('new_password', newPassword);
+        
+        const response = await fetch(`${API_BASE}/api/auth/setup`, {
+            method: 'POST',
+            credentials: 'include',
+            body: formData
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            currentUser.username = data.new_username;
+            hideSetupModal();
+            updateGreeting();
+            showToast('Account erfolgreich eingerichtet!', 'success');
+        } else {
+            const error = await response.json();
+            errorDiv.textContent = error.detail || 'Einrichtung fehlgeschlagen';
+            errorDiv.classList.remove('hidden');
+        }
+    } catch (error) {
+        console.error('Setup error:', error);
+        errorDiv.textContent = 'Verbindungsfehler. Bitte später erneut versuchen.';
+        errorDiv.classList.remove('hidden');
+    }
+}
+
+// Check if user needs setup (default admin)
+function checkIfNeedsSetup() {
+    return currentUser && 
+           currentUser.username === 'admin' &&
+           !currentUser.password_changed;
 }
                 <div class="animate-fade-in" style="width: 100%; max-width: 448px;">
                 <!-- Card -->

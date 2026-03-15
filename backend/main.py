@@ -223,6 +223,50 @@ def change_password(
     return {"message": "Password changed successfully"}
 
 
+@app.post("/api/auth/change-username")
+def change_username(
+    new_username: str = Form(...),
+    current_user: User = Depends(get_current_user_web),
+    db: Session = Depends(get_db)
+):
+    """Change username"""
+    # Check if username already exists
+    existing = db.query(User).filter(User.username == new_username).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="Username already taken")
+    
+    # Update username
+    current_user.username = new_username
+    db.commit()
+    
+    return {"message": "Username changed successfully", "new_username": new_username}
+
+
+@app.post("/api/auth/setup")
+def setup_account(
+    new_username: str = Form(...),
+    new_password: str = Form(...),
+    current_user: User = Depends(get_current_user_web),
+    db: Session = Depends(get_db)
+):
+    """Initial account setup - change from default admin/admin"""
+    # Update username if different
+    if new_username != current_user.username:
+        existing = db.query(User).filter(User.username == new_username).first()
+        if existing:
+            raise HTTPException(status_code=400, detail="Username already taken")
+        current_user.username = new_username
+    
+    # Update password
+    current_user.hashed_password = get_password_hash(new_password)
+    db.commit()
+    
+    return {
+        "message": "Account setup completed",
+        "new_username": new_username
+    }
+
+
 @app.get("/api/auth/me")
 def get_me(current_user: User = Depends(get_current_user_web)):
     """Get current user info"""
