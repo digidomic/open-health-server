@@ -285,6 +285,14 @@ function apiUrl(path) {
     return `${API_BASE}${path}`;
 }
 
+// Helper function for API calls with credentials
+async function apiFetch(path, options = {}) {
+    return fetch(apiUrl(path), {
+        ...options,
+        credentials: 'include'
+    });
+}
+
 // Override fetch to always include credentials
 const originalFetch = window.fetch;
 window.fetch = function(url, options = {}) {
@@ -381,10 +389,7 @@ async function checkConnection() {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 3000);
         
-        const response = await fetch(apiUrl('/api/user/config'), { 
-            signal: controller.signal,
-            cache: 'no-store'
-        });
+        const response = await apiFetch('/api/user/config');
         clearTimeout(timeoutId);
         
         const wasConnected = isBackendConnected;
@@ -552,7 +557,15 @@ function initDate() {
 // Load all entries for navigation
 async function loadAllEntries() {
     try {
-        allEntries = await fetch(apiUrl('/api/health?limit=1000')).then(r => r.json());
+        const response = await apiFetch('/api/health?limit=1000');
+        if (!response.ok) {
+            if (response.status === 401) {
+                showLogin();
+                return;
+            }
+            throw new Error('Failed to load entries');
+        }
+        allEntries = await response.json();
         allEntries.sort((a, b) => new Date(b.datum) - new Date(a.datum));
         
         if (allEntries.length > 0) {
@@ -943,13 +956,13 @@ function initForm() {
             let res;
             
             if (editingEntryId) {
-                res = await fetch(apiUrl(`/api/health/${editingEntryId}`), {
+                res = await apiFetch(`/api/health/${editingEntryId}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
             } else {
-                res = await fetch(apiUrl('/api/health'), {
+                res = await apiFetch('/api/health', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
@@ -981,7 +994,7 @@ function initForm() {
             if (!confirmed) return;
             
             try {
-                const res = await fetch(apiUrl(`/api/health/${editingEntryId}`), {
+                const res = await apiFetch(`/api/health/${editingEntryId}`, {
                     method: 'DELETE'
                 });
                 
