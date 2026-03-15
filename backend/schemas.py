@@ -39,6 +39,7 @@ class HealthStats(BaseModel):
     avg_gewicht: float
     avg_aktivitaetsenergie: float
     avg_training_minuten: float
+    training_last_7_days: int  # Neue Feld: Trainingsminuten letzte 7 Tage
     max_schritte: int
     min_schritte: int
     trend_schritte: str

@@ -644,7 +644,7 @@ async function loadStats() {
         document.getElementById('avg-sleep').textContent = decimalToTimeString(stats.avg_schlaf_stunden);
         document.getElementById('avg-hr').textContent = (stats.avg_herzfrequenz_ruhe + ' bpm') || '-';
         document.getElementById('avg-weight').textContent = formatWeight(stats.avg_gewicht, currentUnits);
-        document.getElementById('avg-training').textContent = Math.round(stats.avg_training_minuten * 7) + ' min' || '-';
+        document.getElementById('avg-training').textContent = (stats.training_last_7_days || 0) + ' min' || '-';
         
         updateTrend('steps-trend', stats.trend_schritte);
         updateTrend('sleep-trend', stats.trend_schlaf);

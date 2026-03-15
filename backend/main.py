@@ -487,10 +487,9 @@ def get_stats(
 
     total = len(entries)
     
-    # Calculate actual date range in weeks
-    dates = [datetime.strptime(e.datum, "%Y-%m-%d") for e in entries]
-    date_range_days = (max(dates) - min(dates)).days + 1
-    weeks = max(date_range_days / 7, 1)  # At least 1 week to avoid division by zero
+    # Calculate training minutes for last 7 days (sum, not average)
+    seven_days_ago = (datetime.now() - timedelta(days=7)).strftime("%Y-%m-%d")
+    training_last_7_days = sum(e.training_minuten for e in entries if e.datum >= seven_days_ago)
 
     avg_schritte = sum(e.schritte for e in entries) / total
     avg_schlaf = sum(e.schlaf_stunden for e in entries) / total
@@ -499,8 +498,6 @@ def get_stats(
     avg_hf_avg = sum(e.herzfrequenz_avg for e in entries) / total
     avg_gewicht = sum(e.gewicht for e in entries) / total
     avg_energie = sum(e.aktivitaetsenergie for e in entries) / total
-    # Training: average per week, not per entry
-    avg_training = sum(e.training_minuten for e in entries) / weeks
 
     schritte_list = [e.schritte for e in entries]
     max_schritte = max(schritte_list)
@@ -529,7 +526,8 @@ def get_stats(
         avg_herzfrequenz_avg=round(avg_hf_avg, 1),
         avg_gewicht=round(avg_gewicht, 1),
         avg_aktivitaetsenergie=round(avg_energie, 1),
-        avg_training_minuten=round(avg_training, 1),
+        avg_training_minuten=0,  # Deprecated, use training_last_7_days instead
+        training_last_7_days=training_last_7_days,
         max_schritte=max_schritte,
         min_schritte=min_schritte,
         trend_schritte=trend_schlaf,
