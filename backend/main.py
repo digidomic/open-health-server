@@ -14,7 +14,7 @@ from schemas import HealthDataCreate, HealthDataResponse, HealthStats
 from auth import (
     init_auth_tables, create_user, authenticate_user, create_access_token,
     decode_access_token, create_api_key, validate_api_key, get_user_api_keys,
-    revoke_api_key, get_user_by_id, User
+    revoke_api_key, get_user_by_id, User, verify_password, get_password_hash
 )
 
 # Load legacy config (for migration)
@@ -113,6 +113,34 @@ async def get_current_user(request: Request, db: Session = Depends(get_db)):
 async def startup_event():
     init_db()
     init_auth_tables()
+    
+    # Create default user if no users exist
+    from database import SessionLocal
+    db = SessionLocal()
+    try:
+        user_count = db.query(User).count()
+        if user_count == 0:
+            # Create default user
+            default_user = User(
+                username="admin",
+                email="admin@localhost",
+                hashed_password=get_password_hash("admin"),
+                language="de",
+                units="metric",
+                is_active=True
+            )
+            db.add(default_user)
+            db.commit()
+            print("=" * 60)
+            print("DEFAULT USER CREATED")
+            print("Username: admin")
+            print("Password: admin")
+            print("Please change the password after first login!")
+            print("=" * 60)
+    except Exception as e:
+        print(f"Error creating default user: {e}")
+    finally:
+        db.close()
 
 
 # ============ AUTHENTICATION ENDPOINTS ============
@@ -174,6 +202,25 @@ def logout(response: Response):
     """Logout and clear cookie"""
     response.delete_cookie(COOKIE_NAME)
     return {"message": "Logout successful"}
+
+
+@app.post("/api/auth/change-password")
+def change_password(
+    current_password: str = Form(...),
+    new_password: str = Form(...),
+    current_user: User = Depends(get_current_user_web),
+    db: Session = Depends(get_db)
+):
+    """Change user password"""
+    # Verify current password
+    if not verify_password(current_password, current_user.hashed_password):
+        raise HTTPException(status_code=400, detail="Current password is incorrect")
+    
+    # Update password
+    current_user.hashed_password = get_password_hash(new_password)
+    db.commit()
+    
+    return {"message": "Password changed successfully"}
 
 
 @app.get("/api/auth/me")
