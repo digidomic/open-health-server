@@ -247,7 +247,10 @@ def login(
 
     # Set cookie with explicit expires for session persistence
     max_age = COOKIE_MAX_AGE if remember else None
-    expires = datetime.utcnow() + timedelta(days=30) if remember else None
+    expires = None
+    if remember:
+        expires = datetime.utcnow() + timedelta(days=30)
+        expires = expires.strftime("%a, %d %b %Y %H:%M:%S GMT")
     
     response.set_cookie(
         key=COOKIE_NAME,
