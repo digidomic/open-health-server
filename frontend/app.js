@@ -470,7 +470,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 // Load user config (language + units)
 async function loadUserConfig() {
     try {
-        const config = await fetch(apiUrl('/api/user/config')).then(r => r.json());
+        const response = await apiFetch('/api/user/config');
+        if (!response.ok) return;
+        const config = await response.json();
         currentLang = config.language || 'de';
         currentUnits = config.units || 'metric';
     } catch (err) {
@@ -638,7 +640,15 @@ function updateNavigationButtons() {
 // Load stats
 async function loadStats() {
     try {
-        const stats = await fetch(apiUrl('/api/health/stats?days=30')).then(r => r.json());
+        const response = await apiFetch('/api/health/stats?days=30');
+        if (!response.ok) {
+            if (response.status === 401) {
+                showLogin();
+                return;
+            }
+            throw new Error('Failed to load stats');
+        }
+        const stats = await response.json();
         
         document.getElementById('avg-steps').textContent = stats.avg_schritte?.toLocaleString(currentLang === 'de' ? 'de-DE' : 'en-US') || '-';
         document.getElementById('avg-sleep').textContent = decimalToTimeString(stats.avg_schlaf_stunden);
@@ -720,7 +730,15 @@ function showView(viewName) {
 // Dashboard fallback
 async function initDashboard() {
     try {
-        const latest = await fetch(apiUrl('/api/health/latest')).then(r => r.json());
+        const response = await apiFetch('/api/health/latest');
+        if (!response.ok) {
+            if (response.status === 401) {
+                showLogin();
+                return;
+            }
+            throw new Error('Failed to load latest entry');
+        }
+        const latest = await response.json();
         if (latest) {
             document.getElementById('steps-value').textContent = latest.schritte?.toLocaleString(currentLang === 'de' ? 'de-DE' : 'en-US') || '-';
             document.getElementById('sleep-value').textContent = decimalToTimeString(latest.schlaf_stunden);
@@ -1279,7 +1297,15 @@ function formatDate(dateStr) {
 // Load entry for editing
 async function loadEntryForEdit(date) {
     try {
-        const entry = await fetch(apiUrl(`/api/health/date/${date}`)).then(r => r.json());
+        const response = await apiFetch(`/api/health/date/${date}`);
+        if (!response.ok) {
+            if (response.status === 401) {
+                showLogin();
+                return;
+            }
+            throw new Error('Failed to load entry');
+        }
+        const entry = await response.json();
         
         if (entry) {
             editingEntryId = entry.id;
