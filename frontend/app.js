@@ -1290,12 +1290,124 @@ function copyApiKey() {
     });
 }
 
-// Update showView to load API keys when switching to that view
+// ============ PROFILE MENU ============
+
+// Toggle profile dropdown menu
+function toggleProfileMenu() {
+    const menu = document.getElementById('profile-menu');
+    menu.classList.toggle('hidden');
+    
+    // Update username in menu
+    if (currentUser && currentUser.username) {
+        const usernameEl = document.getElementById('profile-username');
+        if (usernameEl) usernameEl.textContent = currentUser.username;
+    }
+    
+    // Close menu when clicking outside
+    if (!menu.classList.contains('hidden')) {
+        setTimeout(() => {
+            document.addEventListener('click', closeProfileMenuOnClickOutside, { once: true });
+        }, 100);
+    }
+}
+
+// Close profile menu when clicking outside
+function closeProfileMenuOnClickOutside(e) {
+    const menu = document.getElementById('profile-menu');
+    const button = e.target.closest('button[onclick="toggleProfileMenu()"]');
+    
+    if (!menu.contains(e.target) && !button) {
+        menu.classList.add('hidden');
+    }
+}
+
+// Show profile modal
+function showProfileModal(section) {
+    const modal = document.getElementById('profile-modal');
+    const apikeysSection = document.getElementById('profile-apikeys-section');
+    const passwordSection = document.getElementById('profile-password-section');
+    
+    // Hide all sections
+    apikeysSection.classList.add('hidden');
+    passwordSection.classList.add('hidden');
+    
+    // Show selected section
+    if (section === 'apikeys') {
+        apikeysSection.classList.remove('hidden');
+        loadApiKeys();
+    } else if (section === 'password') {
+        passwordSection.classList.remove('hidden');
+    }
+    
+    // Show modal
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+
+// Close profile modal
+function closeProfileModal() {
+    const modal = document.getElementById('profile-modal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    
+    // Reset forms
+    document.getElementById('change-password-form')?.reset();
+    document.getElementById('apikey-form')?.reset();
+    document.getElementById('new-apikey-display')?.classList.add('hidden');
+    document.getElementById('password-error')?.classList.add('hidden');
+}
+
+// Handle password change
+async function handleChangePassword(event) {
+    event.preventDefault();
+    
+    const currentPassword = document.getElementById('current-password').value;
+    const newPassword = document.getElementById('new-password').value;
+    const confirmPassword = document.getElementById('confirm-password').value;
+    const errorDiv = document.getElementById('password-error');
+    
+    // Validate
+    if (newPassword !== confirmPassword) {
+        errorDiv.textContent = 'Passwörter stimmen nicht überein';
+        errorDiv.classList.remove('hidden');
+        return;
+    }
+    
+    if (newPassword.length < 6) {
+        errorDiv.textContent = 'Passwort muss mindestens 6 Zeichen haben';
+        errorDiv.classList.remove('hidden');
+        return;
+    }
+    
+    try {
+        const formData = new FormData();
+        formData.append('current_password', currentPassword);
+        formData.append('new_password', newPassword);
+        
+        const response = await apiFetch('/api/auth/change-password', {
+            method: 'POST',
+            body: formData
+        });
+        
+        if (response.ok) {
+            showToast('✅ Passwort geändert!');
+            closeProfileModal();
+        } else {
+            const error = await response.json();
+            errorDiv.textContent = error.detail || 'Fehler beim Ändern des Passworts';
+            errorDiv.classList.remove('hidden');
+        }
+    } catch (err) {
+        console.error('Error changing password:', err);
+        errorDiv.textContent = 'Verbindungsfehler';
+        errorDiv.classList.remove('hidden');
+    }
+}
+
+// Update showView to remove apikeys (now in profile modal)
 const originalShowView = showView;
 showView = function(view) {
     originalShowView(view);
-    if (view === 'apikeys') {
-        // Small delay to ensure DOM is ready
-        setTimeout(loadApiKeys, 100);
-    }
+    // Close profile menu if open
+    document.getElementById('profile-menu')?.classList.add('hidden');
 };
