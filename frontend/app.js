@@ -215,7 +215,12 @@ async function showApp() {
     updateGreeting();
     await loadAllEntries();
     initForm();
-    initCharts();
+    
+    // Delay chart init slightly to ensure DOM is ready
+    setTimeout(() => {
+        initCharts();
+    }, 100);
+    
     updateUIText();
 }
 
@@ -738,144 +743,185 @@ function getChartColors() {
 }
 
 async function loadStepsChart(days) {
-    const colors = getChartColors();
-    const data = await fetch(apiUrl(`/api/health/chart/schritte?days=${days}`)).then(r => r.json());
-    
-    const ctx = document.getElementById('stepsChart').getContext('2d');
-    if (stepsChart) stepsChart.destroy();
-    
-    stepsChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: data.labels,
-            datasets: [{
-                label: t('stats.steps'),
-                data: data.values,
-                borderColor: '#10b981',
-                backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                fill: true,
-                tension: 0.4
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { 
-                    display: false,
-                    labels: { color: colors.titleColor }
-                }
-            },
-            scales: {
-                y: { 
-                    grid: { color: colors.gridColor },
-                    ticks: { color: colors.textColor }
-                },
-                x: { 
-                    grid: { display: false },
-                    ticks: { color: colors.textColor, maxTicksLimit: 6 }
-                }
-            },
-            interaction: { intersect: false, mode: 'index' }
+    try {
+        const colors = getChartColors();
+        const response = await apiFetch(`/api/health/chart/schritte?days=${days}`);
+        if (!response.ok) {
+            console.error('Steps chart error:', response.status);
+            return;
         }
-    });
+        const data = await response.json();
+        
+        const canvas = document.getElementById('stepsChart');
+        if (!canvas) return;
+        
+        const ctx = canvas.getContext('2d');
+        if (stepsChart) stepsChart.destroy();
+        
+        stepsChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: data.labels,
+                datasets: [{
+                    label: t('stats.steps'),
+                    data: data.values,
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { 
+                        display: false,
+                        labels: { color: colors.titleColor }
+                    }
+                },
+                scales: {
+                    y: { 
+                        grid: { color: colors.gridColor },
+                        ticks: { color: colors.textColor }
+                    },
+                    x: { 
+                        grid: { display: false },
+                        ticks: { color: colors.textColor, maxTicksLimit: 6 }
+                    }
+                },
+                interaction: { intersect: false, mode: 'index' }
+            }
+        });
+    } catch (err) {
+        console.error('Error loading steps chart:', err);
+    }
 }
 
 async function loadSleepChart() {
-    const colors = getChartColors();
-    const data = await fetch(apiUrl('/api/health/chart/schlaf_stunden?days=30')).then(r => r.json());
-    
-    const ctx = document.getElementById('sleepChart').getContext('2d');
-    if (sleepChart) sleepChart.destroy();
-    
-    sleepChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: data.labels,
-            datasets: [{
-                label: t('stats.sleep'),
-                data: data.values,
-                backgroundColor: '#3b82f6',
-                borderRadius: 4
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false }
+    try {
+        const colors = getChartColors();
+        const response = await apiFetch('/api/health/chart/schlaf_stunden?days=30');
+        if (!response.ok) {
+            console.error('Sleep chart error:', response.status);
+            return;
+        }
+        const data = await response.json();
+        
+        const canvas = document.getElementById('sleepChart');
+        if (!canvas) return;
+        
+        const ctx = canvas.getContext('2d');
+        if (sleepChart) sleepChart.destroy();
+        
+        sleepChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: data.labels,
+                datasets: [{
+                    label: t('stats.sleep'),
+                    data: data.values,
+                    backgroundColor: '#3b82f6',
+                    borderRadius: 4
+                }]
             },
-            scales: {
-                y: { 
-                    grid: { color: colors.gridColor },
-                    ticks: { color: colors.textColor }
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
                 },
-                x: { 
-                    grid: { display: false },
-                    ticks: { color: colors.textColor, maxTicksLimit: 6 }
+                scales: {
+                    y: { 
+                        grid: { color: colors.gridColor },
+                        ticks: { color: colors.textColor }
+                    },
+                    x: { 
+                        grid: { display: false },
+                        ticks: { color: colors.textColor, maxTicksLimit: 6 }
+                    }
                 }
             }
-        }
-    });
+        });
+    } catch (err) {
+        console.error('Error loading sleep chart:', err);
+    }
 }
 
 async function loadHRChart() {
-    const colors = getChartColors();
-    const dataRest = await fetch(apiUrl('/api/health/chart/herzfrequenz_ruhe?days=30')).then(r => r.json());
-    const dataAvg = await fetch(apiUrl('/api/health/chart/herzfrequenz_avg?days=30')).then(r => r.json());
-    
-    const ctx = document.getElementById('hrChart').getContext('2d');
-    if (hrChart) hrChart.destroy();
-    
-    hrChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: dataRest.labels,
-            datasets: [
-                {
-                    label: t('stats.restingHR'),
-                    data: dataRest.values,
-                    borderColor: '#8b5cf6',
-                    backgroundColor: 'rgba(139, 92, 246, 0.1)',
-                    fill: false,
-                    tension: 0.4
-                },
-                {
-                    label: t('stats.avgHR'),
-                    data: dataAvg.values,
-                    borderColor: '#ec4899',
-                    backgroundColor: 'rgba(236, 72, 153, 0.1)',
-                    fill: false,
-                    tension: 0.4
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { 
-                    position: 'top',
-                    labels: { 
-                        usePointStyle: true, 
-                        boxWidth: 8,
-                        color: colors.textColor
-                    }
-                } 
-            },
-            scales: {
-                y: { 
-                    grid: { color: colors.gridColor },
-                    ticks: { color: colors.textColor }
-                },
-                x: { 
-                    grid: { display: false }, 
-                    ticks: { color: colors.textColor, maxTicksLimit: 6 } 
-                }
-            },
-            interaction: { intersect: false, mode: 'index' }
+    try {
+        const colors = getChartColors();
+        const [restResponse, avgResponse] = await Promise.all([
+            apiFetch('/api/health/chart/herzfrequenz_ruhe?days=30'),
+            apiFetch('/api/health/chart/herzfrequenz_avg?days=30')
+        ]);
+        
+        if (!restResponse.ok || !avgResponse.ok) {
+            console.error('HR chart error:', restResponse.status, avgResponse.status);
+            return;
         }
-    });
+        
+        const dataRest = await restResponse.json();
+        const dataAvg = await avgResponse.json();
+        
+        const canvas = document.getElementById('hrChart');
+        if (!canvas) return;
+        
+        const ctx = canvas.getContext('2d');
+        if (hrChart) hrChart.destroy();
+        
+        hrChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: dataRest.labels,
+                datasets: [
+                    {
+                        label: t('stats.restingHR'),
+                        data: dataRest.values,
+                        borderColor: '#8b5cf6',
+                        backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                        fill: false,
+                        tension: 0.4
+                    },
+                    {
+                        label: t('stats.avgHR'),
+                        data: dataAvg.values,
+                        borderColor: '#ec4899',
+                        backgroundColor: 'rgba(236, 72, 153, 0.1)',
+                        fill: false,
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { 
+                        position: 'top',
+                        labels: { 
+                            usePointStyle: true, 
+                            boxWidth: 8,
+                            color: colors.textColor
+                        }
+                    } 
+                },
+                scales: {
+                    y: { 
+                        grid: { color: colors.gridColor },
+                        ticks: { color: colors.textColor }
+                    },
+                    x: { 
+                        grid: { display: false }, 
+                        ticks: { color: colors.textColor, maxTicksLimit: 6 } 
+                    }
+                },
+                interaction: { intersect: false, mode: 'index' }
+            }
+        });
+    } catch (err) {
+        console.error('Error loading HR chart:', err);
+    }
 }
 
 // Custom Confirm Modal
