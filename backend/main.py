@@ -245,15 +245,18 @@ def login(
         data={"sub": str(user["id"]), "username": user["username"]}
     )
 
-    # Set cookie
+    # Set cookie with explicit expires for session persistence
     max_age = COOKIE_MAX_AGE if remember else None
+    expires = datetime.utcnow() + timedelta(days=30) if remember else None
+    
     response.set_cookie(
         key=COOKIE_NAME,
         value=access_token,
         httponly=True,
         secure=False,  # Set to True in production with HTTPS
         samesite="lax",
-        max_age=max_age
+        max_age=max_age,
+        expires=expires
     )
 
     return {
