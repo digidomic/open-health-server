@@ -486,6 +486,11 @@ def get_stats(
         )
 
     total = len(entries)
+    
+    # Calculate actual date range in weeks
+    dates = [datetime.strptime(e.datum, "%Y-%m-%d") for e in entries]
+    date_range_days = (max(dates) - min(dates)).days + 1
+    weeks = max(date_range_days / 7, 1)  # At least 1 week to avoid division by zero
 
     avg_schritte = sum(e.schritte for e in entries) / total
     avg_schlaf = sum(e.schlaf_stunden for e in entries) / total
@@ -494,7 +499,8 @@ def get_stats(
     avg_hf_avg = sum(e.herzfrequenz_avg for e in entries) / total
     avg_gewicht = sum(e.gewicht for e in entries) / total
     avg_energie = sum(e.aktivitaetsenergie for e in entries) / total
-    avg_training = sum(e.training_minuten for e in entries) / total
+    # Training: average per week, not per entry
+    avg_training = sum(e.training_minuten for e in entries) / weeks
 
     schritte_list = [e.schritte for e in entries]
     max_schritte = max(schritte_list)
