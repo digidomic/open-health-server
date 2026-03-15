@@ -26,9 +26,13 @@ if os.path.exists(SECRET_KEY_FILE):
         SECRET_KEY = f.read().strip()
 else:
     SECRET_KEY = secrets.token_urlsafe(32)
-    # Save for persistence
-    with open(SECRET_KEY_FILE, 'w') as f:
-        f.write(SECRET_KEY)
+    # Save for persistence - ensure directory exists
+    try:
+        os.makedirs(os.path.dirname(SECRET_KEY_FILE), exist_ok=True)
+        with open(SECRET_KEY_FILE, 'w') as f:
+            f.write(SECRET_KEY)
+    except Exception as e:
+        print(f"Warning: Could not save secret key: {e}")
 
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_DAYS = 30
