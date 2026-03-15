@@ -494,8 +494,12 @@ def get_stats(
     total = len(entries)
     
     # Calculate training minutes for last 7 days (sum, not average)
+    # Use same date format as stored in database (YYYY-MM-DD)
     seven_days_ago = (datetime.now() - timedelta(days=7)).strftime("%Y-%m-%d")
-    training_last_7_days = sum(e.training_minuten for e in entries if e.datum >= seven_days_ago)
+    training_last_7_days = sum(
+        e.training_minuten for e in entries 
+        if e.datum and str(e.datum) >= seven_days_ago
+    )
 
     avg_schritte = sum(e.schritte for e in entries) / total
     avg_schlaf = sum(e.schlaf_stunden for e in entries) / total
