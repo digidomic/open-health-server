@@ -456,7 +456,7 @@ def get_stats(
 ):
     since = (datetime.now() - timedelta(days=days)).strftime("%Y-%m-%d")
     entries = db.query(HealthData).filter(
-        HealthData.user_id == username,
+        HealthData.user_id == current_user.username,
         HealthData.datum >= since
     ).all()
 
