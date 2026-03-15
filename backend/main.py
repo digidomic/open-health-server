@@ -104,15 +104,15 @@ async def get_current_user(request: Request, db: Session = Depends(get_db)):
         api_key = auth_header[7:]
         user = validate_api_key(api_key)
         if user:
+            return user
+
+    raise HTTPException(status_code=401, detail="Authentication required")
+
 
 @app.on_event("startup")
 async def startup_event():
     init_db()
     init_auth_tables()
-    finally:
-        db.close()
-    finally:
-        db.close()
 
 
 # ============ AUTHENTICATION ENDPOINTS ============
