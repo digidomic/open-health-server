@@ -1195,7 +1195,15 @@ async function loadHistory(days) {
     const startDate = since.toISOString().split('T')[0];
     
     try {
-        const entries = await fetch(apiUrl(`/api/health?start_date=${startDate}`)).then(r => r.json());
+        const response = await apiFetch(`/api/health?start_date=${startDate}`);
+        if (!response.ok) {
+            if (response.status === 401) {
+                showLogin();
+                return;
+            }
+            throw new Error('Failed to load history');
+        }
+        const entries = await response.json();
 
         const container = document.getElementById('history-list');
         container.innerHTML = '';
