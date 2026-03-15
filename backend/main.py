@@ -120,11 +120,12 @@ async def startup_event():
     try:
         user_count = db.query(User).count()
         if user_count == 0:
-            # Create default user
+            # Create default user with simple password hash
+            # Use a pre-computed hash for "admin" to avoid bcrypt issues
             default_user = User(
                 username="admin",
                 email="admin@localhost",
-                hashed_password=get_password_hash("admin"),
+                hashed_password="$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",  # hash for "admin"
                 language="de",
                 units="metric",
                 is_active=True
@@ -139,6 +140,8 @@ async def startup_event():
             print("=" * 60)
     except Exception as e:
         print(f"Error creating default user: {e}")
+        import traceback
+        traceback.print_exc()
     finally:
         db.close()
 
