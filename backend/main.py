@@ -119,6 +119,50 @@ async def startup_event():
 
 # ============ AUTHENTICATION ENDPOINTS ============
 
+@app.get("/api/auth/setup-required")
+def check_setup_required(db: Session = Depends(get_db)):
+    """Check if initial setup is required (no users exist yet)"""
+    user_count = db.query(User).count()
+    return {"setup_required": user_count == 0}
+
+
+@app.post("/api/auth/setup")
+def initial_setup(
+    username: str = Form(...),
+    password: str = Form(...),
+    email: Optional[str] = Form(None),
+    db: Session = Depends(get_db)
+):
+    """Initial setup - create first admin user (only works if no users exist)"""
+    # Check if users already exist
+    user_count = db.query(User).count()
+    if user_count > 0:
+        raise HTTPException(
+            status_code=403, 
+            detail="Setup already completed. Use login instead."
+        )
+    
+    # Create first user as admin
+    try:
+        user = User(
+            username=username,
+            email=email or f"{username}@localhost",
+            hashed_password=get_password_hash(password),
+            language="de",
+            units="metric",
+            is_active=True
+        )
+        db.add(user)
+        db.commit()
+        
+        return {
+            "message": "Setup completed successfully",
+            "username": user.username
+        }
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=str(e))
+
 @app.post("/api/auth/register")
 def register(
     username: str = Form(...),
