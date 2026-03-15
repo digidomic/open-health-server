@@ -288,10 +288,12 @@ function apiUrl(path) {
 // Override fetch to always include credentials
 const originalFetch = window.fetch;
 window.fetch = function(url, options = {}) {
-    return originalFetch(url, {
-        ...options,
-        credentials: 'include'
-    });
+    // Ensure credentials are included for API calls
+    const isApiCall = url.includes(API_BASE) || (typeof url === 'string' && url.startsWith('/api/'));
+    if (isApiCall) {
+        options = { ...options, credentials: 'include' };
+    }
+    return originalFetch(url, options);
 };
 
 // Global state

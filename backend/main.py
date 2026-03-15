@@ -37,6 +37,21 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Custom exception handler to ensure CORS headers on errors
+@app.exception_handler(HTTPException)
+async def custom_http_exception_handler(request: Request, exc: HTTPException):
+    from fastapi.responses import JSONResponse
+    response = JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail}
+    )
+    # Add CORS headers manually
+    origin = request.headers.get("origin")
+    if origin in ["http://192.168.9.23:8095", "http://localhost:8080", "http://localhost:3000", "http://127.0.0.1:8080"]:
+        response.headers["Access-Control-Allow-Origin"] = origin
+        response.headers["Access-Control-Allow-Credentials"] = "true"
+    return response
+
 # Cookie settings
 COOKIE_NAME = "access_token"
 COOKIE_MAX_AGE = 30 * 24 * 60 * 60  # 30 days
