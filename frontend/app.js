@@ -215,13 +215,20 @@ async function showApp() {
     updateGreeting();
     await loadAllEntries();
     initForm();
+    updateUIText();
     
-    // Delay chart init slightly to ensure DOM is ready
+    // Delay chart init to ensure DOM is visible and has dimensions
     setTimeout(() => {
         initCharts();
-    }, 100);
-    
-    updateUIText();
+        // Force resize after a short delay to ensure charts render correctly
+        setTimeout(() => {
+            [stepsChart, sleepChart, hrChart].forEach(chart => {
+                if (chart && chart.resize) {
+                    chart.resize();
+                }
+            });
+        }, 100);
+    }, 50);
 }
 
 // Handle login form submit
@@ -714,9 +721,16 @@ async function initDashboard() {
 
 // Charts
 function initCharts() {
-    loadStepsChart(7);
-    loadSleepChart();
-    loadHRChart();
+    // Load all charts in parallel
+    Promise.all([
+        loadStepsChart(7),
+        loadSleepChart(),
+        loadHRChart()
+    ]).then(() => {
+        console.log('All charts loaded');
+    }).catch(err => {
+        console.error('Error loading charts:', err);
+    });
 }
 
 function updateChartColors() {
