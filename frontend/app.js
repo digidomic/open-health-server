@@ -1185,8 +1185,8 @@ async function loadApiKeys() {
             throw new Error('Failed to load API keys');
         }
         
-        const keys = await response.json();
-        displayApiKeys(keys);
+        const data = await response.json();
+        displayApiKeys(data.api_keys || []);
     } catch (err) {
         console.error('Error loading API keys:', err);
         document.getElementById('apikeys-list').innerHTML = 
@@ -1295,6 +1295,7 @@ const originalShowView = showView;
 showView = function(view) {
     originalShowView(view);
     if (view === 'apikeys') {
-        loadApiKeys();
+        // Small delay to ensure DOM is ready
+        setTimeout(loadApiKeys, 100);
     }
 };
