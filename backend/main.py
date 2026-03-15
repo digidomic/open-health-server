@@ -104,47 +104,11 @@ async def get_current_user(request: Request, db: Session = Depends(get_db)):
         api_key = auth_header[7:]
         user = validate_api_key(api_key)
         if user:
-            return user
-
-    raise HTTPException(status_code=401, detail="Authentication required")
-
 
 @app.on_event("startup")
 async def startup_event():
     init_db()
     init_auth_tables()
-    
-    # Create default user if no users exist
-    from database import SessionLocal
-    db = SessionLocal()
-    try:
-        user_count = db.query(User).count()
-        print(f"DEBUG: User count = {user_count}")
-        if user_count == 0:
-            # Create default user with simple password hash
-            # Use a pre-computed hash for "admin" to avoid bcrypt issues
-            default_user = User(
-                username="admin",
-                email="admin@localhost",
-                hashed_password="$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",  # hash for "admin"
-                language="de",
-                units="metric",
-                is_active=True
-            )
-            db.add(default_user)
-            db.commit()
-            print("=" * 60)
-            print("DEFAULT USER CREATED")
-            print("Username: admin")
-            print("Password: admin")
-            print("Please change the password after first login!")
-            print("=" * 60)
-        else:
-            print(f"DEBUG: {user_count} users already exist, skipping default user creation")
-    except Exception as e:
-        print(f"Error creating default user: {e}")
-        import traceback
-        traceback.print_exc()
     finally:
         db.close()
     finally:
