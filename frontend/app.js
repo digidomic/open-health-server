@@ -1,8 +1,10 @@
-// API Configuration
-// API_BASE is now defined in api-config.js
+// API Configuration - loaded from api-config.js
+// API_BASE is defined in api-config.js
 
-// Current user info
+// Current state
 let currentUser = null;
+let currentLang = 'de';
+let translations = {};
 let isSetupRequired = false;
 
 // Override fetch to always include credentials
@@ -14,15 +16,17 @@ window.fetch = function(url, options = {}) {
     });
 };
 
-// Initialize app
+// Initialize on DOM load
 document.addEventListener('DOMContentLoaded', async () => {
     await initApp();
 });
 
-// Initialize app - check if setup or login is needed
+// Initialize app
 async function initApp() {
     try {
-        // Check if setup is required (no users exist yet)
+        console.log('Initializing app...');
+        
+        // Check if setup is required
         const setupResponse = await fetch(`${API_BASE}/api/auth/setup-required`, {
             credentials: 'include'
         });
@@ -30,6 +34,7 @@ async function initApp() {
         if (setupResponse.ok) {
             const setupData = await setupResponse.json();
             isSetupRequired = setupData.setup_required;
+            console.log('Setup required:', isSetupRequired);
             
             if (isSetupRequired) {
                 // Show setup form
@@ -42,6 +47,7 @@ async function initApp() {
                 
                 if (authResponse.ok) {
                     currentUser = await authResponse.json();
+                    console.log('Already logged in as:', currentUser.username);
                     showApp();
                 } else {
                     // Show login form
@@ -49,6 +55,7 @@ async function initApp() {
                 }
             }
         } else {
+            console.log('Setup endpoint not available, showing login');
             showLoginForm();
         }
     } catch (error) {
@@ -59,33 +66,96 @@ async function initApp() {
 
 // Show setup form (for first user)
 function showSetupForm() {
-    document.getElementById('login-loading').classList.add('hidden');
-    document.getElementById('setup-form-container').classList.remove('hidden');
-    document.getElementById('login-form-container').classList.add('hidden');
+    const loginView = document.getElementById('login-view');
+    if (!loginView) return;
+    
+    // Replace login form with setup form
+    const formContainer = loginView.querySelector('.bg-white, .dark\\:bg-gray-800');
+    if (formContainer) {
+        formContainer.innerHTML = `
+            <div class="text-center mb-8">
+                <div class="w-20 h-20 mx-auto mb-4 rounded-full flex items-center justify-center card-gradient">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                    </svg>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Willkommen!</h1>
+                <p class="text-gray-500 dark:text-gray-400 mt-2">Erstelle deinen Account</p>
+            </div>
+            
+            <form id="setup-form">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Benutzername</label>
+                    <input type="text" id="setup-username" required 
+                        class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        placeholder="z.B. max">
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Passwort</label>
+                    <input type="password" id="setup-password" required minlength="6"
+                        class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        placeholder="Mindestens 6 Zeichen">
+                </div>
+                
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Passwort wiederholen</label>
+                    <input type="password" id="setup-password-confirm" required
+                        class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        placeholder="Passwort wiederholen">
+                </div>
+                
+                <button type="submit" 
+                    class="w-full py-4 rounded-xl font-semibold text-white transition-all transform active:scale-95 card-gradient">
+                    Account erstellen
+                </button>
+            </form>
+            
+            <div id="setup-error" class="mt-4 p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-xl text-sm hidden"></div>
+        `;
+        
+        // Add event listener
+        document.getElementById('setup-form').addEventListener('submit', handleSetup);
+    }
 }
 
-// Show login form
+// Show login form (default)
 function showLoginForm() {
-    document.getElementById('login-loading').classList.add('hidden');
-    document.getElementById('setup-form-container').classList.add('hidden');
-    document.getElementById('login-form-container').classList.remove('hidden');
+    console.log('Showing login form');
+    // Login form is already in HTML, just ensure it's visible
+    const loginView = document.getElementById('login-view');
+    if (loginView) {
+        loginView.style.display = 'flex';
+    }
 }
 
 // Show main app
 function showApp() {
-    document.getElementById('login-view').classList.add('hidden');
-    document.querySelector('.bottom-nav').style.display = 'flex';
-    document.querySelector('header').style.display = 'block';
+    console.log('Showing app');
+    const loginView = document.getElementById('login-view');
+    if (loginView) {
+        loginView.style.display = 'none';
+    }
     
-    // Show dashboard
-    document.getElementById('dashboard-view').classList.remove('hidden');
+    // Show main content
+    const dashboardView = document.getElementById('dashboard-view');
+    const bottomNav = document.querySelector('nav');
+    const header = document.querySelector('header');
     
-    // Initialize
-    initDashboard();
-    updateGreeting();
+    if (dashboardView) dashboardView.classList.remove('hidden');
+    if (bottomNav) bottomNav.style.display = 'flex';
+    if (header) header.style.display = 'block';
+    
+    // Initialize dashboard
+    if (typeof initDashboard === 'function') {
+        initDashboard();
+    }
+    if (typeof updateGreeting === 'function') {
+        updateGreeting();
+    }
 }
 
-// Handle setup form submission (first user)
+// Handle setup form submission
 async function handleSetup(event) {
     event.preventDefault();
     
@@ -151,7 +221,6 @@ async function handleLoginAfterSetup(username, password) {
             currentUser = await response.json();
             showApp();
         } else {
-            // Show login form if auto-login fails
             showLoginForm();
         }
     } catch (error) {
@@ -166,7 +235,7 @@ async function handleLogin(event) {
     
     const username = document.getElementById('login-username').value;
     const password = document.getElementById('login-password').value;
-    const remember = document.getElementById('login-remember').checked;
+    const remember = document.getElementById('login-remember')?.checked ?? true;
     const errorDiv = document.getElementById('login-error');
     
     try {
@@ -182,18 +251,21 @@ async function handleLogin(event) {
         });
         
         if (response.ok) {
-            const data = await response.json();
-            currentUser = data;
+            currentUser = await response.json();
             showApp();
         } else {
             const error = await response.json();
-            errorDiv.textContent = error.detail || 'Login fehlgeschlagen';
-            errorDiv.classList.remove('hidden');
+            if (errorDiv) {
+                errorDiv.textContent = error.detail || 'Login fehlgeschlagen';
+                errorDiv.classList.remove('hidden');
+            }
         }
     } catch (error) {
         console.error('Login error:', error);
-        errorDiv.textContent = 'Verbindungsfehler. Bitte später erneut versuchen.';
-        errorDiv.classList.remove('hidden');
+        if (errorDiv) {
+            errorDiv.textContent = 'Verbindungsfehler. Bitte später erneut versuchen.';
+            errorDiv.classList.remove('hidden');
+        }
     }
 }
 
@@ -209,7 +281,7 @@ async function logout() {
     }
     
     currentUser = null;
-    location.reload(); // Reload to show login
+    location.reload();
 }
 
 // Helper function for API URLs
@@ -217,7 +289,7 @@ function apiUrl(path) {
     return `${API_BASE}${path}`;
 }
 
-// Placeholder functions for the rest of the app
+// Placeholder functions for compatibility
 function initDashboard() {
     console.log('Dashboard initialized');
 }
@@ -238,17 +310,11 @@ function loadHistory(days) {
     console.log('Load history:', days);
 }
 
-// Global state for translations
-let currentLang = 'de';
-let translations = {};
-
 async function loadUserConfig() {
-    // Placeholder
     return { language: 'de', units: 'metric' };
 }
 
 async function loadTranslations(lang) {
-    // Placeholder
     translations = {};
     return translations;
 }
