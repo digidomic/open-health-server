@@ -140,12 +140,63 @@
                     <span class="inline-block w-2 h-2 bg-green-500 rounded-full pulse-dot mr-1"></span>
                     Online
                 </span>
+                <!-- Logout Button -->
+                <button onclick="logout()" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-400 transition-colors" title="Logout">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                    </svg>
+                </button>
             </div>
         </div>
     </header>
 
+    <!-- Login View -->
+    <main id="login-view" class="min-h-screen flex items-center justify-center p-4" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 w-full max-w-md">
+            <div class="text-center mb-8">
+                <div class="w-20 h-20 mx-auto mb-4 rounded-full flex items-center justify-center" style="background: linear-gradient(135deg, #10b981, #059669);">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                    </svg>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Open Health Server</h1>
+                <p class="text-gray-500 dark:text-gray-400 mt-2">Bitte einloggen</p>
+            </div>
+            
+            <form id="login-form" onsubmit="handleLogin(event)">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Benutzername</label>
+                    <input type="text" id="login-username" required 
+                        class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        placeholder="Benutzername">
+                </div>
+                
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Passwort</label>
+                    <input type="password" id="login-password" required 
+                        class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        placeholder="Passwort">
+                </div>
+                
+                <div class="flex items-center mb-6">
+                    <input type="checkbox" id="login-remember" checked 
+                        class="w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500">
+                    <label for="login-remember" class="ml-2 text-sm text-gray-600 dark:text-gray-400">Angemeldet bleiben</label>
+                </div>
+                
+                <button type="submit" 
+                    class="w-full py-4 rounded-xl font-semibold text-white transition-all transform active:scale-95"
+                    style="background: linear-gradient(135deg, #10b981, #059669);">
+                    Einloggen
+                </button>
+            </form>
+            
+            <div id="login-error" class="mt-4 p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-xl text-sm hidden"></div>
+        </div>
+    </main>
+
     <!-- Dashboard View -->
-    <main id="dashboard-view" class="p-4 slide-in">
+    <main id="dashboard-view" class="p-4 slide-in hidden">
         <!-- Willkommen mit Navigation -->
         <div class="mb-6">
             <h2 class="text-2xl font-bold text-gray-800" id="greeting" style="opacity: 0; transition: opacity 0.3s;"><span id="greeting-name"></span></h2>

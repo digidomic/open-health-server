@@ -1,53 +1,115 @@
 // API Configuration
 // API_BASE is now defined in api-config.js
 
-// Get token from URL
-const urlParams = new URLSearchParams(window.location.search);
-const AUTH_TOKEN = urlParams.get('token');
-
-// Detect language from browser for error messages
+// Detect language from browser
 const browserLang = navigator.language || navigator.userLanguage || 'en';
 const isGerman = browserLang.toLowerCase().startsWith('de');
 
-const texts = {
-    de: {
-        title: 'Zugriff verweigert',
-        message: 'Kein oder ungültiger Token angegeben. Ein gültiger Authentifizierungs-Token ist erforderlich.',
-        help: 'Bitte rufen Sie diese Seite mit einem gültigen Token auf:',
-    },
-    en: {
-        title: 'Access Denied',
-        message: 'No or invalid token provided. A valid authentication token is required.',
-        help: 'Please access this page with a valid token:',
+// Current user info
+let currentUser = null;
+
+// Initialize app
+document.addEventListener('DOMContentLoaded', () => {
+    checkAuth();
+});
+
+// Check authentication status
+async function checkAuth() {
+    try {
+        const response = await fetch(`${API_BASE}/api/auth/me`, {
+            credentials: 'include'  // Important: send cookies
+        });
+        
+        if (response.ok) {
+            currentUser = await response.json();
+            showApp();
+        } else {
+            showLogin();
+        }
+    } catch (error) {
+        console.error('Auth check failed:', error);
+        showLogin();
     }
-};
+}
 
-const deniedTexts = isGerman ? texts.de : texts.en;
-const exampleUrl = `${window.location.origin}${window.location.pathname}?token=your-token-here`;
+// Show login view
+function showLogin() {
+    document.getElementById('login-view').classList.remove('hidden');
+    document.getElementById('dashboard-view').classList.add('hidden');
+    document.getElementById('add-view').classList.add('hidden');
+    document.getElementById('history-view').classList.add('hidden');
+    document.querySelector('.bottom-nav').style.display = 'none';
+    document.querySelector('header').style.display = 'none';
+}
 
-// Function to show access denied page
-function showAccessDenied() {
-    document.body.innerHTML = `
-        <!DOCTYPE html>
-        <html lang="${isGerman ? 'de' : 'en'}" class="antialiased">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>${deniedTexts.title} | Open Health Server</title>
-            <script src="https://cdn.tailwindcss.com"><\/script>
-            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-            <style>
-                * { font-family: 'Inter', sans-serif; box-sizing: border-box; }
-                html { height: 100%; }
-                body { min-height: 100vh; margin: 0; }
-                @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-                .animate-fade-in { animation: fadeIn 0.5s ease-out; }
-                @keyframes pulse-slow { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
-                .animate-pulse-slow { animation: pulse-slow 2s infinite; }
-            </style>
-        </head>
-        <body class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
-            <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1rem;">
+// Show main app
+function showApp() {
+    document.getElementById('login-view').classList.add('hidden');
+    document.getElementById('dashboard-view').classList.remove('hidden');
+    document.querySelector('.bottom-nav').style.display = 'flex';
+    document.querySelector('header').style.display = 'block';
+    
+    // Initialize dashboard
+    initDashboard();
+    updateGreeting();
+}
+
+// Handle login form submit
+async function handleLogin(event) {
+    event.preventDefault();
+    
+    const username = document.getElementById('login-username').value;
+    const password = document.getElementById('login-password').value;
+    const remember = document.getElementById('login-remember').checked;
+    const errorDiv = document.getElementById('login-error');
+    
+    try {
+        const formData = new FormData();
+        formData.append('username', username);
+        formData.append('password', password);
+        formData.append('remember', remember);
+        
+        const response = await fetch(`${API_BASE}/api/auth/login`, {
+            method: 'POST',
+            credentials: 'include',
+            body: formData
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            currentUser = data;
+            showApp();
+        } else {
+            const error = await response.json();
+            errorDiv.textContent = error.detail || 'Login fehlgeschlagen';
+            errorDiv.classList.remove('hidden');
+        }
+    } catch (error) {
+        console.error('Login error:', error);
+        errorDiv.textContent = 'Verbindungsfehler. Bitte später erneut versuchen.';
+        errorDiv.classList.remove('hidden');
+    }
+}
+
+// Logout
+async function logout() {
+    try {
+        await fetch(`${API_BASE}/api/auth/logout`, {
+            method: 'POST',
+            credentials: 'include'
+        });
+    } catch (error) {
+        console.error('Logout error:', error);
+    }
+    
+    currentUser = null;
+    showLogin();
+    
+    // Clear form
+    document.getElementById('login-username').value = '';
+    document.getElementById('login-password').value = '';
+    document.getElementById('login-error').classList.add('hidden');
+}
                 <div class="animate-fade-in" style="width: 100%; max-width: 448px;">
                 <!-- Card -->
                 <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
@@ -97,9 +159,17 @@ let authCheckComplete = false;
 
 // Helper function to add token to URL
 function apiUrl(path) {
-    const separator = path.includes('?') ? '&' : '?';
-    return `${API_BASE}${path}${separator}token=${AUTH_TOKEN}`;
+    return `${API_BASE}${path}`;
 }
+
+// Override fetch to always include credentials
+const originalFetch = window.fetch;
+window.fetch = function(url, options = {}) {
+    return originalFetch(url, {
+        ...options,
+        credentials: 'include'
+    });
+};
 
 // Global state
 let currentLang = 'de';
