@@ -70,6 +70,22 @@ async def generic_exception_handler(request: Request, exc: Exception):
         response.headers["Access-Control-Allow-Credentials"] = "true"
     return response
 
+
+# Handle OPTIONS preflight for all API routes
+@app.options("/{path:path}")
+async def options_handler(request: Request, path: str):
+    from fastapi.responses import Response
+    origin = request.headers.get("origin")
+    if origin in ["http://192.168.9.23:8095", "http://localhost:8080", "http://localhost:3000", "http://127.0.0.1:8080"]:
+        response = Response()
+        response.headers["Access-Control-Allow-Origin"] = origin
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+        response.headers["Access-Control-Allow-Headers"] = "*"
+        response.headers["Access-Control-Allow-Credentials"] = "true"
+        return response
+    return Response(status_code=403)
+
+
 # Cookie settings
 COOKIE_NAME = "access_token"
 COOKIE_MAX_AGE = 30 * 24 * 60 * 60  # 30 days
