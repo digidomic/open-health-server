@@ -56,6 +56,45 @@ function showLogin() {
     document.querySelector('header').style.display = 'none';
 }
 
+// Update greeting
+function updateGreeting() {
+    const greetingEl = document.getElementById('greeting');
+    const nameEl = document.getElementById('greeting-name');
+    
+    if (greetingEl && nameEl && currentUser && currentUser.username) {
+        nameEl.textContent = `Willkommen ${currentUser.username}! 👋`;
+        greetingEl.style.opacity = '1';
+    }
+}
+
+// Initialize date input
+function initDate() {
+    const dateInput = document.getElementById('input-date');
+    if (dateInput) {
+        dateInput.valueAsDate = new Date();
+    }
+}
+
+// Initialize dark mode
+function initDarkMode() {
+    const darkMode = localStorage.getItem('darkMode') === 'true';
+    if (darkMode) {
+        document.documentElement.classList.add('dark');
+    }
+}
+
+// Toggle dark mode
+function toggleDarkMode() {
+    const isDark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('darkMode', isDark);
+}
+
+// Initialize dashboard
+function initDashboard() {
+    // Dashboard is already visible, nothing special to do
+    console.log('Dashboard initialized');
+}
+
 // Show setup form (for first user)
 function showSetupForm() {
     const loginView = document.getElementById('login-view');
@@ -162,15 +201,22 @@ async function handleSetup(event) {
 }
 
 // Show main app
-function showApp() {
+async function showApp() {
     document.getElementById('login-view').classList.add('hidden');
     document.getElementById('dashboard-view').classList.remove('hidden');
     document.querySelector('.bottom-nav').style.display = 'flex';
     document.querySelector('header').style.display = 'block';
     
-    // Initialize dashboard
-    initDashboard();
+    // Initialize app
+    await loadUserConfig();
+    await loadTranslations(currentLang);
+    initDate();
+    initDarkMode();
     updateGreeting();
+    await loadAllEntries();
+    initForm();
+    initCharts();
+    updateUIText();
 }
 
 // Handle login form submit
@@ -399,51 +445,7 @@ function showOfflineWarning() {
 
 // Initialize
 document.addEventListener('DOMContentLoaded', async () => {
-    // First: check if token exists
-    if (!AUTH_TOKEN) {
-        showAccessDenied();
-        return;
-    }
-    
-    // Validate token with backend
-    try {
-        const response = await fetch(apiUrl('/api/user/me'), { cache: 'no-store' });
-        if (!response.ok) {
-            showAccessDenied();
-            return;
-        }
-        const user = await response.json();
-        currentUsername = user.username;
-        tokenValid = true;
-    } catch (err) {
-        console.error('Token validation error:', err);
-        showAccessDenied();
-        return;
-    }
-    
-    // Token is valid - proceed with app initialization
-    try {
-        // Reihenfolge ist wichtig:
-        // 1. Config laden (enthält Sprache)
-        await loadUserConfig();
-        // 2. Translations laden (für t() Funktion)
-        await loadTranslations(currentLang);
-        // 3. UI initialisieren
-        initDate();
-        initDarkMode();
-        loadUserInfo();
-        
-        // 4. Daten laden
-        await loadAllEntries();
-        initForm();
-        initCharts();
-        updateUIText();
-        
-        // 5. Connection check starten
-        connectionCheckInterval = setInterval(checkConnection, 30000);
-    } catch (err) {
-        console.error('App initialization error:', err);
-    }
+    await checkAuth();
 });
 
 // Load user config (language + units)
