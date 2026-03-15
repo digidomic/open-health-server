@@ -698,6 +698,21 @@ function showView(viewName) {
         loadHistory(7);
     }
     
+    // Reload charts when returning to dashboard
+    if (viewName === 'dashboard') {
+        setTimeout(() => {
+            initCharts();
+            // Force resize
+            setTimeout(() => {
+                [stepsChart, sleepChart, hrChart].forEach(chart => {
+                    if (chart && chart.resize) {
+                        chart.resize();
+                    }
+                });
+            }, 100);
+        }, 50);
+    }
+    
     // Update UI text when switching views
     updateUIText();
 }
