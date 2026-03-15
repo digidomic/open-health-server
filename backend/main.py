@@ -193,7 +193,7 @@ def login(
 
     # Create JWT token
     access_token = create_access_token(
-        data={"sub": str(user.id), "username": user.username}
+        data={"sub": str(user["id"]), "username": user["username"]}
     )
 
     # Set cookie
@@ -209,9 +209,9 @@ def login(
 
     return {
         "message": "Login successful",
-        "username": user.username,
-        "language": user.language,
-        "units": user.units
+        "username": user["username"],
+        "language": user["language"],
+        "units": user["units"]
     }
 
 

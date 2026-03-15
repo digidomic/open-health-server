@@ -189,8 +189,8 @@ async function handleSetup(event) {
         });
         
         if (response.ok) {
-            // Auto-login after setup
-            await handleLoginAfterSetup(username, password);
+            // Setup successful - reload page to show login
+            location.reload();
         } else {
             const error = await response.json();
             errorDiv.textContent = error.detail || 'Setup fehlgeschlagen';

@@ -153,7 +153,7 @@ def create_user(username: str, password: str, email: Optional[str] = None,
         db.close()
 
 
-def authenticate_user(username: str, password: str) -> Optional[User]:
+def authenticate_user(username: str, password: str) -> Optional[dict]:
     """Authenticate a user with username and password"""
     from database import SessionLocal
     
@@ -171,18 +171,36 @@ def authenticate_user(username: str, password: str) -> Optional[User]:
         user.last_login = datetime.utcnow()
         db.commit()
         
-        return user
+        # Return user data as dict (session will be closed)
+        return {
+            "id": user.id,
+            "username": user.username,
+            "email": user.email,
+            "language": user.language,
+            "units": user.units,
+            "is_active": user.is_active
+        }
     finally:
         db.close()
 
 
-def get_user_by_id(user_id: int) -> Optional[User]:
+def get_user_by_id(user_id: int) -> Optional[dict]:
     """Get a user by ID"""
     from database import SessionLocal
     
     db = SessionLocal()
     try:
-        return db.query(User).filter(User.id == user_id).first()
+        user = db.query(User).filter(User.id == user_id).first()
+        if user:
+            return {
+                "id": user.id,
+                "username": user.username,
+                "email": user.email,
+                "language": user.language,
+                "units": user.units,
+                "is_active": user.is_active
+            }
+        return None
     finally:
         db.close()
 
